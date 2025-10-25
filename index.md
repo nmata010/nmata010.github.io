@@ -2,6 +2,6 @@
 layout: home
 ---
 
-Welcome to my blog!
+Sometimes I build things, but I've never really shared them. 
 
-This is my new homepage. You can read my posts below.
+I'm trying to change that. Here are some things I've worked on recently.
