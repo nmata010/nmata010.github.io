@@ -3,7 +3,7 @@ layout: post
 title: "Training a computer vision model"
 date: 2025-10-23
 ---
-# training a model with yolo
+# stuff i want to cover
 - Here's where I started with this GitHub template
 - Here are some questions and points of confusion I ran into and how I solved them
 - Here are some observations after my first training run (1 epoch), with a gif of the videos that identify way too many potholes
