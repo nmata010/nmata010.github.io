@@ -3,9 +3,9 @@ plugins:
   - jekyll-remote-theme
 minima:
   skin: dark
+  social_links:
+    linkedin: nmatamoros
 
 title: Nick M. Blog
 author: Nick M.
 
-social_links:
-    linkedin: /nmatamoros
