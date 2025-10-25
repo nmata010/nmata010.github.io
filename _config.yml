@@ -1,6 +1,8 @@
-theme: minima
-title: Nick M. Blog
-author: Nick M.
-
+remote_theme: jekyll/minima
+plugins:
+  - jekyll-remote-theme
 minima:
   skin: dark
+
+title: Nick M. Blog
+author: Nick M.
