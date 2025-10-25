@@ -1,3 +1,6 @@
 theme: minima
 title: Nick M. Blog
 author: Nick M.
+
+minima:
+  skin: dark
