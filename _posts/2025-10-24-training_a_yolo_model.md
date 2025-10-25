@@ -1,3 +1,8 @@
+---
+layout: post
+title: "Training a computer vision model"
+date: 2025-10-23
+---
 # training a model with yolo
 - Here's where I started with this GitHub template
 - Here are some questions and points of confusion I ran into and how I solved them
