@@ -125,22 +125,27 @@ This is also not useful, so where did I go wrong?
 ## Troubleshooting overfitting
 The first word that came to mind is "overfitting". Overfitting occurs when a model is trained for too long on a dataset that is not diverse enough. 
 
-The behavior of an overfit model is that it will perform well on the trainig data :white_check_mark:, but poorly on validation data :x:. This would translate to also performing porly on realworld data :white_check_mark: if it is not closely similar to the training data.  
+The behavior of an overfit model is that it will perform well on the trainig data, but poorly on validation data. This would translate to also performing porly on realworld data if it is not closely similar to the training data.  
 
 Maybe overfitting could be the case here: 
 - The kaggle dataset is small at only ~2700 images.
 - Many of them are very similar images.
 - I _did_ run for 20 epochs. Maybe that's enough to overfit?
 
-But the reality is that our training data shows that the model is performing well on both training data AND validation data. Its only falling short on realworld data. So overfitting _is not_ the likely cause of the model's woes.
+I'm not sure, but the reality is that our training data shows that the model is performing well on both training data AND validation data. Its only falling short on realworld data. 
+
+So IMO overfitting _is not_ the likely cause of the model's woes. Whats next?
 
 ## Troubleshooting confidence
-So if its not the training, maybe its the inference. During inference, the model takes some parameters as inputs. One of those parameters is `conf_thresh` which it uses to determine how liberally to detect objects.
+So if its not the training, maybe its the inference. During inference, the model takes some parameters as inputs. One of those parameters is confidence threshold ()`conf_thresh`) which it uses to determine how liberally to detect objects.
 
-Confidence threshold (`conf_thresh`) refers to the certainty the model has that it has correctly detected an object during inference. The higher this value, the fewer boxes the model will draw. The lower the value, the more boxes it will draw.
+**Confidence threshold** refers to the certainty the model must have that it has correctly detected an object before drawing a box around it during inference. The higher this value, the fewer boxes the model will draw. The lower the value, the more boxes it will draw.
 
-I left this value as its default `conf_thresh = 0.5`. So maybe I should try tweaking & rerunning the inference to see if it improves. Maybe this threshold is too high. 
+I left this value as its default `conf_thresh = 0.5`. It could be the case that the model is detecting the potholes, but with too low confidence to draw the box. Maybe I should try tweaking confidence & rerunning the inference to see if the result improves. 
 
+I progresively reduced confidence from `0.5` all the way down to `0.05` and checked reuslts at every interval. I will spare you each result but , but I thought `0.2` captured well the 
+
+ My hope was that I would land at a conI was abland re-running inference I found that confidence 
 >>>I need to finish the intro to the gif
 
 I reduced confidence to 0.2
