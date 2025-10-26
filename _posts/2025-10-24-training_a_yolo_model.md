@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Training a computer vision model"
+title: "Training a YOLO model"
 date: 2025-10-23
 ---
 ## tl;dr
@@ -141,6 +141,7 @@ I left this value as its default `conf_thresh = 0.5`. So maybe I should try twea
 I reduced confidence to 0.2
 
 `<overhead_annotated_20e_conf20pct.gif>`
+
 
 notice it picks up more potholes than the 40pct, but it also misses a lot of obvious potholes. beyond that it identifes things as potholes that are obviously NOT potholes.
 
