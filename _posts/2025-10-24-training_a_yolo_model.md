@@ -85,7 +85,7 @@ I uploaded a couple of stock videos to my colab environment showing roads from a
 
 _Note on saving the output. Its really easy to save to Colab environment but bigger files to download is a hassle. I ended up mounting my gdrive and using that as my save-to location._
 
-So how did my freshly trained model do? It was... _enthusiastic_. Everythings a pothole! Grass? Pothole. Motorcycle? Pothole. Fun to watch, sure, but not quite the usefulness I had hoped for. 
+So how did my freshly trained model do? I'd call it... _enthusiastic_. Everythings a pothole! Grass? Pothole. Motorcycle? Pothole. Fun to watch, sure, but not quite the usefulness I had hoped for. 
 
 ![1epoch_annotated_vid.gif](/assets/2025-10-24-training_a_yolo_model/1epoch_annotated_vid.gif)
 
@@ -105,28 +105,27 @@ When the training re-runs, it will over-write the 1-epoch model with the newly u
 ## Run #2 Nothings a pothole
 I set `epochs = 20` and hit 'run' and wait. After just 20 min the training is complete and we can check the results.
 
-As the training ran I observed the results of each epoch on the console. Each one includes some scores to help assess if the model is getting any better. Since I'm just experimenting, I focused on `box_loss` and `mAP50`:
+As the training ran I watched the results of each epoch on the console. Each one includes some scores to help assess if the model is getting any better. Since I'm just experimenting I focused on `box_loss` and `mAP50`:
 - **Box Loss (box_loss)** refers to how often the model drew a square around an object that wasn't a pothole. The lower this score, the better the model is performing. 
 - **Mean Average Precision @ 50% overlap (mAP50)** looks at how often the model drew a square that overlapped at least 50% with the training data. The higher this score, the better the model is performing. 
 
->>>need an intro to the chart here.
-
+With the training completed I thought it might be interesting to plot the loss and precision on a graph. 
 ![boxloss_blue_vs_mAP50_orange_by_Epoch.png](/assets/2025-10-24-training_a_yolo_model/boxloss_blue_vs_mAP50_orange_by_Epoch.png)
-[data here](/assets/2025-10-24-training_a_yolo_model/boxloss_blue_vs_mAP50_orange_by_Epoch.json)
+([data here](/assets/2025-10-24-training_a_yolo_model/boxloss_blue_vs_mAP50_orange_by_Epoch.json))
 
 
 You'll notice that as as epochs complete, box_loss goes down while mAP goes up. This means my model is getting better at predicting potholes! (right?)
 
-The only way to know is to run inference using our newly training model and see what we get. So I did just that and the results were... underwhelming.
+The only way to know for sure is to run a fresh inference using this new model.  Unfortunately the results were... _underwhelming_. Suddenly, nothing is a pothole, until the very end when it decides the motorcycle is a pothole. 
 
 ![overhead_annotated_20e_conf40pct.gif](/assets/2025-10-24-training_a_yolo_model/overhead_annotated_20e_conf40pct.gif)
 
-So where did I go wrong? 
+This is also not useful, so where did I go wrong? 
 
 ## Troubleshooting overfitting
 The first word that came to mind is "overfitting". Overfitting occurs when a model is trained for too long on a dataset that is not diverse enough. 
 
-The behavior of an overfit model is that it will perform well on the trainig data (:check:), but poorly on validation data (:x:). This would translate to also performing porly on realworld data (:check:) if it is not closely similar to the training data.  
+The behavior of an overfit model is that it will perform well on the trainig data :white_check_mark:, but poorly on validation data :x:. This would translate to also performing porly on realworld data :white_check_mark: if it is not closely similar to the training data.  
 
 Maybe overfitting could be the case here: 
 - The kaggle dataset is small at only ~2700 images.
