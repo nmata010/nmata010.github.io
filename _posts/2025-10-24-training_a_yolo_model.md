@@ -4,7 +4,7 @@ title: "Training a YOLO model"
 date: 2025-10-23
 ---
 ## tl;dr
-- model training is more accessible than i expected (thanks in large part to this template)
+- model training is more accessible than i expected (thanks in large part to [this template](https://github.com/mfranzon/yolo-training-template))
 - matching the dataset to the usecase is key (this is obvious in hindsight)
 - training loss and mAP figures are not a great proxy for real-world performance
 - ml models have a lot of levers available for tuning performance
