@@ -74,7 +74,7 @@ But there are a few downsides that I also considered:
 
 At this point we have all our ducks in a row i’m ready to start training. I updated the `dataset_handle` parameter in cell 5 to reference the pothole detection handle and clicked 'run' on Cells 1-6. The training begins and now we wait...
 
-## Run #1 Everythings a pothole
+## Training Run #1: Everythings a pothole
 Training run #1 was pretty quick coming in at around ~5 min (thanks Google). I chose to only run training for 1 Epoch, my hope was that this would be fast and good-enough to start inferencing on videos from outside the training set.
 
 I uploaded a couple of stock videos to my colab environment showing roads from an over-head persepctive and got ready to run inference on this. This process was also really easy thanks to the scripts in the template. All I had to do was:
@@ -102,7 +102,7 @@ After a quick review of `train_model()` I see that the solve is pretty simple. J
  
 When the training re-runs, it will over-write the 1-epoch model with the newly updated one, which is what I want. 
 
-## Run #2 Nothings a pothole
+## Training Run #2: Nothings a pothole
 I set `epochs = 20` and hit 'run' and wait. After just 20 min the training is complete and we can check the results.
 
 As the training ran I watched the results of each epoch on the console. Each one includes some scores to help assess if the model is getting any better. Since I'm just experimenting I focused on `box_loss` and `mAP50`:
@@ -166,9 +166,26 @@ I think this points to a problem related to domain shift.
 
 **Domain shift** refers to a situation where training and validation data do not match well to real-world conditions. The net result is a model really good at detecting objects when conditions are similar to the training set, but which fails otherwise. 
 
-I think thats what's at play here. 
+I think thats what's at play here. So how do we confirm? 
 
-To verify, I took a look at the dataset itself 
+To start I went back to the kaggle dataset saw that most of the images in the training set are: 
+- Taken up close where the pothole was neatly in frame
+- Images taken at ground level
+- Most images contain 1 or 2 potholes
+- Few images of long roads with multiple holes
+- NO ariel images
+
+The validation image are mostly the same, and I think this confirms that the 'real world' use-case (overhead video) simply doesn't match well to the training data (ground-level potholes). 
+
+This is classic domain shift, and it stems from a very simple and obvious mistake I made early on. 
+
+I failed to follow a fundamental rule of all things: _start with the end in mind_
+
+## Conclusion
+When I set off to train my first model I didn't have a specific usecase in mind. Instead I was just experimenting and didn't really think that far ahead. 
+
+
+crux: you have to start with the end in mind (duh). 
 
 from our 'real-world'
 - IDK i think its DOMAIN SHIFT. 
