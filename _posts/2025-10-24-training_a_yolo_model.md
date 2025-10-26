@@ -87,7 +87,7 @@ _Note on saving the output. Its really easy to save to Colab environment but big
 
 So how did my freshly trained model do? It was... _enthusiastic_. Everythings a pothole! Grass? Pothole. Motorcycle? Pothole. Fun to watch, sure, but not quite the usefulness I had hoped for. 
 
-![1epoch_annotated_vid.gif](../assets/2025-10-24-training_a_yolo_model/1epoch_annotated_vid.gif)
+![1epoch_annotated_vid.gif](/assets/2025-10-24-training_a_yolo_model/1epoch_annotated_vid.gif)
 
 So what went wrong? My first guess was that the model hadn't seen enough training data, or gone through enough iterations of the training data, to get good at detecting potholes. 
 
@@ -109,13 +109,18 @@ As the training ran I observed the results of each epoch on the console. Each on
 - **Box Loss (box_loss)** refers to how often the model drew a square around an object that wasn't a pothole. The lower this score, the better the model is performing. 
 - **Mean Average Precision @ 50% overlap (mAP50)** looks at how often the model drew a square that overlapped at least 50% with the training data. The higher this score, the better the model is performing. 
 
-![boxloss_blue_vs_mAP50_orange_by_Epoch.png](../assets/2025-10-24-training_a_yolo_model/boxloss_blue_vs_mAP50_orange_by_Epoch.png)
+>need an intro to the chart here.
+
+[data here](assets/2025-10-24-training_a_yolo_model/boxloss_blue_vs_mAP50_orange_by_Epoch.json)
+![boxloss_blue_vs_mAP50_orange_by_Epoch.png](/assets/2025-10-24-training_a_yolo_model/boxloss_blue_vs_mAP50_orange_by_Epoch.png)
+
+
 
 You'll notice that as as epochs complete, box_loss goes down while mAP goes up. This means my model is getting better at predicting potholes! (right?)
 
 The only way to know is to run inference using our newly training model and see what we get. So I did just that and the results were... underwhelming.
 
-![overhead_annotated_20e_conf40pct.gif](../assets/2025-10-24-training_a_yolo_model/overhead_annotated_20e_conf40pct.gif)
+![overhead_annotated_20e_conf40pct.gif](/assets/2025-10-24-training_a_yolo_model/overhead_annotated_20e_conf40pct.gif)
 
 So where did I go wrong? 
 
@@ -138,10 +143,13 @@ Confidence threshold (`conf_thresh`) refers to the certainty the model has that 
 
 I left this value as its default `conf_thresh = 0.5`. So maybe I should try tweaking & rerunning the inference to see if it improves. Maybe this threshold is too high. 
 
+>I need to finish the intro to the gif
+
 I reduced confidence to 0.2
 
-`<overhead_annotated_20e_conf20pct.gif>`
+![overhead_annotated_20e_conf20pct.gif](/assets/2025-10-24-training_a_yolo_model/overhead_annotated_20e_conf20pct.gif)
 
+> gotta clean all this up
 
 notice it picks up more potholes than the 40pct, but it also misses a lot of obvious potholes. beyond that it identifes things as potholes that are obviously NOT potholes.
 
