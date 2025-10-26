@@ -143,20 +143,34 @@ So if its not the training, maybe its the inference. During inference, the model
 
 I left this value as its default `conf_thresh = 0.5`. It could be the case that the model is detecting the potholes, but with too low confidence to draw the box. Maybe I should try tweaking confidence & rerunning the inference to see if the result improves. 
 
-I progresively reduced confidence from `0.5` all the way down to `0.05` and checked reuslts at every interval. I will spare you each result but , but I thought `0.2` captured well the 
+I progresively reduced confidence from `0.5` all the way down to `0.05` and checked reuslts at every interval. I will spare you each result but , but I thought the one below captured the problem with this approach well. 
 
- My hope was that I would land at a conI was abland re-running inference I found that confidence 
->>>I need to finish the intro to the gif
+Take a look at the inference results when we set confidence to `0.05`. My first observation was that its detecting a lot more actual potholes! This is a great start, but it doesn't last. 
 
-I reduced confidence to 0.2
+As the scene changes to an overhead view, the model picks up less and less potholes. All throughout it thinks the motorcycle is a pothole. This is _a little_ better, but it feels like the models grip on what a pothole looks like is tenuous. 
 
-![overhead_annotated_20e_conf20pct.gif](/assets/2025-10-24-training_a_yolo_model/overhead_annotated_20e_conf20pct.gif)
+![overhead_annotated_20e_conf05pct.gif](/assets/2025-10-24-training_a_yolo_model/overhead_annotated_20e_conf05pct.gif)
 
->>>gotta clean all this up
+I think there are a few conclusions to draw from this:
+1. First is that using ultra-low confidence is pretty risky. A lot of non-potholes are detected which reduces the utility of the inference severely. 
+2. Second, while confidence is part of the solution, its not the only issue here.
 
-notice it picks up more potholes than the 40pct, but it also misses a lot of obvious potholes. beyond that it identifes things as potholes that are obviously NOT potholes.
+Something else is afoot. 
 
-## So wtf? 
+## Domain Shift
+So the model knows what _some_ potholes look like. And its able to pick up a lot of potholes but only at a very low confidence. 
+
+I noticed when the shot moves to way overhead, the model is unable to pick up any potholes, even at a low confidence. 
+
+I think this points to a problem related to domain shift.
+
+**Domain shift** refers to a situation where training and validation data do not match well to real-world conditions. The net result is a model really good at detecting objects when conditions are similar to the training set, but which fails otherwise. 
+
+I think thats what's at play here. 
+
+To verify, I took a look at the dataset itself 
+
+from our 'real-world'
 - IDK i think its DOMAIN SHIFT. 
 - Whats domain shift? its xyz
 - Does it map to our situation? yee pretty much
