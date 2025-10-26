@@ -3,17 +3,12 @@ layout: post
 title: "Training a computer vision model"
 date: 2025-10-23
 ---
-## stuff i want to cover
-- Here's where I started with this GitHub template
-- Here are some questions and points of confusion I ran into and how I solved them
-- Here are some observations after my first training run (1 epoch), with a gif of the videos that identify way too many potholes
-- Here are some data points from my 2nd training run (20 epochs) where we can observe the losses falling and mAP growing
-- Here are some new observations after my 2nd training run with a gif of the videos that identify way too few potholes (0.5 conf)
-- Here is some confidence tuning I did and how it resulted in better results, but sometimes only marginally so
-- Here is what I could do next to make this trained model better like finding more diverse training data
-- Conclusion: this was fun and I learned a lot. Its a great first project and I encourage others to do it too.
+## tl;dr
+- model training is more accessible than i expected (thanks in large part to this template)
+- matching the dataset to the usecase is key (this is obvious in hindsight)
+- training loss and mAP figures are not a great proxy for real-world performance
+- ml models have a lot of levers available for tuning performance
 
----
 ## Where do we begin?
 
 Last week i came across a post by mfranzon’s about training a computer vision ML model on a laptop with just a few lines of Python. 
@@ -160,8 +155,3 @@ notice it picks up more potholes than the 40pct, but it also misses a lot of obv
 So now what?
 - Gotta update the training set!
 
-tl;dr
-- model training is more accessible than i expected (thanks in large part to this template)
-- matching the dataset to the usecase is key (this is obvious in hindsight)
-- training loss and mAP figures are not a great proxy for real-world performance
-- ml models have a lot of levers available for tuning performance
