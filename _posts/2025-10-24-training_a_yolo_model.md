@@ -109,11 +109,10 @@ As the training ran I observed the results of each epoch on the console. Each on
 - **Box Loss (box_loss)** refers to how often the model drew a square around an object that wasn't a pothole. The lower this score, the better the model is performing. 
 - **Mean Average Precision @ 50% overlap (mAP50)** looks at how often the model drew a square that overlapped at least 50% with the training data. The higher this score, the better the model is performing. 
 
->need an intro to the chart here.
+>>>need an intro to the chart here.
 
-[data here](assets/2025-10-24-training_a_yolo_model/boxloss_blue_vs_mAP50_orange_by_Epoch.json)
 ![boxloss_blue_vs_mAP50_orange_by_Epoch.png](/assets/2025-10-24-training_a_yolo_model/boxloss_blue_vs_mAP50_orange_by_Epoch.png)
-
+[data here](assets/2025-10-24-training_a_yolo_model/boxloss_blue_vs_mAP50_orange_by_Epoch.json)
 
 
 You'll notice that as as epochs complete, box_loss goes down while mAP goes up. This means my model is getting better at predicting potholes! (right?)
@@ -143,13 +142,13 @@ Confidence threshold (`conf_thresh`) refers to the certainty the model has that 
 
 I left this value as its default `conf_thresh = 0.5`. So maybe I should try tweaking & rerunning the inference to see if it improves. Maybe this threshold is too high. 
 
->I need to finish the intro to the gif
+>>>I need to finish the intro to the gif
 
 I reduced confidence to 0.2
 
 ![overhead_annotated_20e_conf20pct.gif](/assets/2025-10-24-training_a_yolo_model/overhead_annotated_20e_conf20pct.gif)
 
-> gotta clean all this up
+>>>gotta clean all this up
 
 notice it picks up more potholes than the 40pct, but it also misses a lot of obvious potholes. beyond that it identifes things as potholes that are obviously NOT potholes.
 
