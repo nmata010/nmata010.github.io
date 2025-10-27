@@ -4,35 +4,38 @@ title: "Training a YOLO model"
 date: 2025-10-23
 ---
 ## tl;dr
-- model training is more accessible than i expected (thanks in large part to [this template](https://github.com/mfranzon/yolo-training-template))
-- matching the dataset to the usecase is key (this is obvious in hindsight)
-- training loss and mAP figures are not a great proxy for real-world performance
-- ml models have a lot of levers available for tuning performance
+- Model training is more accessible than I expected (thanks in large part to [this template](https://github.com/mfranzon/yolo-training-template)). 
+- After 20 epochs of training on pothole images, I wasn't able to get high-confidence object detection 
+- Through some troubleshooting, I landed on the cause being related to domain shift.
+- Matching the dataset to the usecase is key (this is obvious in hindsight)
+- training loss and mAP values are not a replacement for real-world benchmarking.
+- I spent more time reading and learning about ML concepts than i did training or inferencing. I think this is a good thing and speaks to the simplicity of the template
 
 ## Where do we begin?
 
-Last week i came across a post by mfranzon’s about training a computer vision ML model on a laptop with just a few lines of Python. 
+Last week I came across a post by [mfranzon](https://github.com/mfranzon) about training a computer vision ML model on a laptop with just a few lines of Python. 
 
-I’ve done a lot of experimenting with foundational models but hadn’t yet experimented with ML much. This felt like a low-friction opportunity to go ‘up the stack’ and get some hands-on experience training models to build better intuition on the subject.
+I’ve done a lot of experimenting with foundational models but hadn’t yet experimented with model training much. This seemed like a low-friction opportunity to go ‘up the stack’ and get some hands-on experience to develop better intuition on the topic.
 
-_This post was written in an effort to be more intentional about documenting and sharing my experimentation. I haven’t done one of these in years so i’ll be shaking off some of the rust, bear with me._
+_This post was written in an effort to be more intentional about documenting and sharing my experimentation. I haven’t done one of these in years so I’ll be shaking off some of the rust; bear with me._
 
 ## YOLO Training Template
 
-mfranzon’s was generous enough to post his [training template here](https://github.com/mfranzon/yolo-training-template). The [readme](https://github.com/mfranzon/yolo-training-template/blob/main/README.md) says its a "template for training YOLO models on kaggle datasets". 
+Mfranzon was generous enough to post his [training template here](https://github.com/mfranzon/yolo-training-template). The [readme](https://github.com/mfranzon/yolo-training-template/blob/main/README.md) says it contains 
+>a template for training YOLO models on any Kaggle dataset... 
 
-That might as well be a different language to me so naturally I had to start with some definitions.
+I'm still new to this so I started with some definitions:
 
 - **You-Only-Look-Once (YOLO)** refers to an object detection algorithm that “looks” at an image only once to find both bounding boxes and probabilities simultaneously ([this blog](https://www.v7labs.com/blog/yolo-object-detection) from v7 was helpful).
-- **Kaggle dataset** just refers to any one of the many datasets hosted on the Kaggle platform. Kaggle is great for learning about ML. 
+- **Kaggle dataset** just refers to any one of the many datasets hosted on the Kaggle platform. Kaggle is great resources for learning about ML. 
 
-Ok so now I have a good-enough understanding of **_what_** mfranzon is trying to  help me achieve. The next step is to understand **_how_**.
+Ok so now I have a good-enough understanding of **_what_** mfranzon is trying to help me achieve. The next step is to understand **_how_**.
 
 ## Getting started
-The readme describes a couple of python scripts  for running training and inference locally, but it also pulls it all into a Jupyter notebook which I know can run on  Colab. Back to some definitions.
+The readme describes a couple of python scripts for running training and inference locally, but it also pulls it all into a Jupyter notebook which I know can run on Google Colab. Back to some definitions.
 
-- **Training** refers to the actual training of the yolo model. The act of giving it a bunch of labeled images to ‘learn’ from and validating its performance. 
-- **Inferencing** refers to running the trained model across an unlabeled image (or video) and getting back a labeled images. Essentially asking the model to identify where on the image the objects of interest exists. 
+- **Training** refers to the actual training of the learning model. The act of giving it a bunch of labeled images to ‘learn’ from and validating its performance.
+- **Inferencing** refers to running the trained model across an unlabeled image (or video in my case) and getting back a labeled image. Essentially asking the model to identify where on the image the objects of interest exists. 
 - [**Jupyter Notebook**](https://jupyter.org/) is an interactive local dev environment that lets you build and run code in different ‘steps’ and see the results in-line. Its a great learning tool.
 - [**Google Colab**](https://colab.research.google.com/) is a _web-based_ dev environment where you can run Jupyter notebooks and avoid any local setup. Plus you get to plug into google’s compute resources for free (!).
 
@@ -40,10 +43,10 @@ I decided to run the Jupyter notebook in Colab for a few reasons:
 1. I wanted to avoid setup issues. Running locally  sometimes means troubleshooting dependencies. I wanted to hit the ground running, not spend an hour chasing down some mis-matched python version.
 2. I’m  impatient. Training a model on your laptop sounds very cool, but the reality is that its pretty slow. I wanted to iterate and experiment quickly; waiting 1-4hrs to train locally would’ve killed my momentum. Colab give me access to high performance GPUs that will cut training down to minutes.
 
-Enough semantics, at this point I understand what we’re trying to do and have a path forward for how I’ll do it. Now lets get started.
+Enough semantics, at this stage I have a path forward on the **_how_**. Now lets get started.
 
 ## What is this thing?
-First things first, I cloned the repo and opened the notebook in Colab (turns out you can skip the cloning and just open the notebook directly in Colab). With the notebook open I read-through each cell to get a better understanding of what the scripts are doing and how they talk to eachother:
+First things first, I cloned the repo and opened the notebook in Colab. With the notebook open I read-through each cell to get a better understanding of what the scripts are doing and how they relate to eachother:
 
 - Cells 1 & 2 install and import dependencies to the dev environment.
 - Cell 3 defines the functions to train the model. Generally:
@@ -56,30 +59,34 @@ First things first, I cloned the repo and opened the notebook in Colab (turns ou
 - Cell 7 defines parameters that are sent to the  inference functions. We’ll have to update these before running inference.
 - Cell 8 is where we run inference by calling the functions in Cell 4 & passing the values from Cell 7. 
 
-Ok, that was a lot… But now we have a baseline understanding of how this notebook gets us from 0-to-trained model. Its time to pick the dataset and see what’s next.
+Now I've got a baseline understanding of how this notebook gets me from 0-to-trained model. Its time to pick the dataset and see what’s next.
 
 ## Picking a dataset
-The training-template repo has a few example datasets that are well-suited for training. 
+The yolo-training-template repo has a few example datasets that are well-suited for training. 
 
-In theory this template could work with any dataset that conforms to one of the structures defined in Cell 3’s `detect_dataset_structure()`. But after a quick look at the options on Kaggle its clear that not all datasets are created equally. 
+I think this template could work with _any_ dataset that conforms to one of the structures defined in Cell 3’s `detect_dataset_structure()`. But after a quick look at the options on Kaggle its clear that not all datasets are created equally. 
 
-I’m here to run training and inference, not troubleshoot datasets, so we better stick with some ‘well-chosen’ datasets from `example_datasets.md` and keep it moving. I chose pothole detection dataset for a few reasons:
+I’m here to run training and inference, not troubleshoot datasets, so I'll stick with some ‘well-chosen’ datasets from `example_datasets.md` and keep it moving. 
+
+I chose pothole detection dataset for a few reasons:
 - Its been done. The author of the template repo himself trained on this dataset. There are also many example of models that do the same. This means I’ll have a lot of resources to pull from when I surely run into trouble.
-- Theres a bunch of pothole datasets on kaggle, so we can add to our training set later if we want.
-- There’s only 1 class, so it should train pretty quickly.
+- Theres a bunch of pothole datasets on Kaggle, so I'll be able to add to the training set down the line if I want.
+- There’s only 1 class, which means the model should train pretty quickly.
 
-But there are a few downsides that I also considered:
-- Its been done before. I’m not gonna get the rush of doing something new. But thats fine for me. I’m here to learn.
-- There’s only 1 class which isn’t as rich as something like the Animal Detection data set which has 80. Again, we’ll live. 
+There are a few downsides that I also considered:
+- Its been done before. I won't get to claim I made something novel. I think that's ok - I'm just getting my feet wet.
+- There’s only 1 class, which isn’t very rich or exciting, but its clear and obvious. The model will either identify the object or not. 
 
-At this point we have all our ducks in a row i’m ready to start training. I updated the `dataset_handle` parameter in cell 5 to reference the pothole detection handle and clicked 'run' on Cells 1-6. The training begins and now we wait...
+At this point I have my ducks in a row I'm ready to start training. I updated the `dataset_handle` parameter in cell 5 to reference the pothole detection handle and clicked 'run' on Cells 1-6. 
+
+The training begins and now it's a waiting game...
 
 ## Training Run #1: Everythings a pothole
-Training run #1 was pretty quick coming in at around ~5 min (thanks Google). I chose to only run training for 1 Epoch, my hope was that this would be fast and good-enough to start inferencing on videos from outside the training set.
+Training run #1 was pretty quick coming in at around ~5 min (thanks Google). I chose to only run training for 1 Epoch. My hope was that this would be fast and good-enough to start inferencing on videos from outside the training set.
 
-I uploaded a couple of stock videos to my colab environment showing roads from an over-head persepctive and got ready to run inference on this. This process was also really easy thanks to the scripts in the template. All I had to do was:
-- Upload the videos to colab & copy the path to their locations
-- Paste the path in Cell 7 `input_source`
+I uploaded a stock video showing roads with potholes to my colab environment and got ready to run inference on it. This process was also really easy thanks to the scripts in the template. All I had to do was:
+- Upload the videos to colab
+- Copy the file path & paste it as the `input_source` in Cell 7
 - Set your save-to location as the `output_path`
 - Click 'run' on Cell 8 & wait. 
 
