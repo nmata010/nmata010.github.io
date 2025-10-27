@@ -194,9 +194,12 @@ At the onset I just wanted to train a model. It was only through iterating that 
 So how could I fix this? 
 
 ## Next Steps
-Since this is just an experiment, there's an easy way out: abandon the overhead videos & stick to ground level. 
+Since this is just an experiment there's an easy way out: abandon the overhead videos & stick to ground level. 
 
-But that's kind of a cop-out, so I want to think through how I would solve this in the real world. we'll need to do a few things to correct our training
+But that's a cop-out, so I want to think through how I would solve this in the real world. I think to do so I'd need to start with more training data.
+
+
+
 - More training data that better matches the overhead usecase. Kaggle has a bunch of pothole datasets, so does Huggingface and I could cultivate my own training images, get some Kaggle has many datasets available, 
 - retrain
 - reinference
