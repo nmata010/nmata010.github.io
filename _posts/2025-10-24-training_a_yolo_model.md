@@ -4,12 +4,10 @@ title: "Training a YOLO model"
 date: 2025-10-23
 ---
 ## tl;dr
-- Model training is more accessible than I expected (thanks in large part to [this template](https://github.com/mfranzon/yolo-training-template)). 
-- After 20 epochs of training on pothole images, I wasn't able to get high-confidence object detection 
-- Through some troubleshooting, I landed on the cause being related to domain shift.
-- Matching the dataset to the usecase is key (this is obvious in hindsight)
-- training loss and mAP values are not a replacement for real-world benchmarking.
-- I spent more time reading and learning about ML concepts than i did training or inferencing. I think this is a good thing and speaks to the simplicity of the template
+- Data strategy **_is_** product strategy; especially in ML!
+- Getting started with ML is more accessible than you think (thanks in large part to [this template](https://github.com/mfranzon/yolo-training-template)).
+- Define the usecase first. Not starting with a clear end-goal leads to drift.
+- ML is a mature field with a lot of learning and experimentation resources to lean on. 
 
 ## Where do we begin?
 
@@ -194,34 +192,38 @@ At the onset I just wanted to train a model. It was only through iterating that 
 So how could I fix this? 
 
 ## Next Steps
-Since this is just an experiment there's an easy way out: abandon the overhead videos & stick to ground level. 
+Since this is just an experiment there's an easy way out: abandon the overhead videos & stick to ground level. But in a real-world scenario, that's typically not an option. 
 
-But that's a cop-out, so I want to think through how I would solve this in the real world. I think to do so I'd need to start with more training data.
+I want to think through how I would solve this in the real world. I think the first-next-step is to address the domain shift by using training data actually represents my target usecase.
 
+There is no shortage of places to get training data. Kaggle and Hugging Face host plenty of datasets, with plenty of 'pothole' specific ones, but the quality can vary and we risk the same situation as earlier - training data that doesn't represent the use-case. 
 
+I think a more reliable approach might be to create some custom training data which would involve
+1. Sourcing representative images. This could be done via licensing or taking original photography.
+2. Manually annotating them to identify each pothole. There are some specialized annotation tools that make this easier, but I won't get into that.
 
-- More training data that better matches the overhead usecase. Kaggle has a bunch of pothole datasets, so does Huggingface and I could cultivate my own training images, get some Kaggle has many datasets available, 
-- retrain
-- reinference
+Once I have a this new training data I'll need to add it to the current data and retrain the model and retest inference on overhead images. 
+
+I'd like to explore creating better data down the line and write about it in a follow up post. For now identifying the domain shift and understanding _why_ the model struggled with my selected videos feelsl ike a solid and valuable stopping point. 
+
+So where did we land?
 
 ## Conclusion
-- that was more accessible than i expected 
-- I spent more time researching and doing this write-up than i did training or using the model
-- These are not novel problems. ML is a mature technology with tons of learning resources available
-- Gotta start with the end in mind or risk going off course
+I spent a few hours trying to teach a computer vision model to identify potholes. And a few days preparing this writeup. I'll highlight some important take-aways that left an impression on me. 
 
-## take aways for PMs
+First, getting started was surprisngly accessible. As I mentioned earlier, I spent more time researching concepts, troubleshooting, and writing my experience than I did training, retraining, and evaluating. This is thanks in large part to mfranzon's temlate, but also because ML is a mature technology with tons of learning resources available. There is an abundance of resources out there for whoever's interested. 
 
-crux: you have to start with the end in mind (duh). 
+I ran into some hiccups with my models performance, but they weren't technical issues; just a good old fashioned product problem. I didn't start with a clear idea of the end usecase, and therefore I didn't get the output I hoped for. This is not a problem unique to ML or computer vision, but this experiment really highlights its importance. If I had started with a specific idea in mind it would've been obvious that the dataset I used wasn't the right one. (although in experimenting sometimes you just have to start and live with the tradeoffs)
 
-from our 'real-world'
-- IDK i think its DOMAIN SHIFT. 
-- Whats domain shift? its xyz
-- Does it map to our situation? yee pretty much
-- how do we confirm? 
-  - inference on pictures more similar to training data
-  - or expand training set to include pictures similar to my use-case (overhead drone shots of roads with potholes)
+The main takeaway for me through this experience is just how important data is for ML applications. My model failed due to a mismatch between training data and test data; clearly defining use cases and ensuring the data strategy aligns with the product goals is critical at an early stage. 
 
-So now what?
-- Gotta update the training set!
+Despite my pothole detection model not being production ready, I'm counting this experiment as a success in terms of learning. 
+- I got a chance to working through training and evaluation issues that occur in the real world. 
+- Troubleshooting differnet rationales for my models performance gave me the opportunity to reason through them in detail and build a better understanding of them. 
+- Realizing that the domain shift was self-inflicted was a great 'aha!' moment. 
 
+---
+
+Thanks for reading, hope to do more of these soon!
+
+Nick M.
