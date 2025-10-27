@@ -87,39 +87,37 @@ Training run #1 was pretty quick coming in at around ~5 min (thanks Google). I c
 I uploaded a stock video showing roads with potholes to my colab environment and got ready to run inference on it. This process was also really easy thanks to the scripts in the template. All I had to do was:
 - Upload the videos to colab
 - Copy the file path & paste it as the `input_source` in Cell 7
-- Set your save-to location as the `output_path`
+- Set the save-to location as the `output_path`
 - Click 'run' on Cell 8 & wait. 
 
-_Note on saving the output. Its really easy to save to Colab environment but bigger files to download is a hassle. I ended up mounting my gdrive and using that as my save-to location._
+_Note on saving the output. Saving to Colab is easy, but files take long to download. I ended up mounting my gdrive and using that as my save-to location._
 
-So how did my freshly trained model do? I'd call it... _enthusiastic_. Everythings a pothole! Grass? Pothole. Motorcycle? Pothole. Fun to watch, sure, but not quite the usefulness I had hoped for. 
+So how did my freshly trained model do? I'd call it... _enthusiastic_. Everythings a pothole! Grass? Pothole. Motorcycle? Pothole. Fun to watch, but not quite the results I was going for. 
 
 ![1epoch_annotated_vid.gif](/assets/2025-10-24-training_a_yolo_model/1epoch_annotated_vid.gif)
 
-So what went wrong? My first guess was that the model hadn't seen enough training data, or gone through enough iterations of the training data, to get good at detecting potholes. 
+So what went wrong? My first guess was that the model hadn't seen enough training data, or gone through enough rounds of training, to get good at detecting potholes. 
 
-This is called 'underfitting' and its a common problem that occurs when the model just hasn't learned enough. There's only one way to fix a model that's underfitting. More training, which means more epochs. 
+This is called 'underfitting' and its a common problem that occurs when the model just hasn't learned enough. There's only one way to fix a model that's underfitting. More training, which in my case means more epochs. 
 
 ## Prepping for another training run
-Alright, so the 1 epoch run is underfitting. Not a big surprise since it only took a few moments to run. There's parameters in Cell 5 of the jupyter notebook that let me set how many epochs I want to run on my next training run. 
+Alright, so the 1 epoch run is underfitting. Not a big surprise since it only took a few moments to run. There's parameters in Cell 5 of the jupyter notebook that let me set how many epochs I want to complete on my next training run. 
 
-Before doing that, I want to make sure i'm _updating_ the training on my 1-epoch model, not starting from scratch. This isn't a major concern, but on principle I wanted to avoid starting from scratch.
+Before doing that, I want to make sure I'm _updating_ the training on my 1-epoch model, instead of starting over. For this example this isn't really a major concern, but as a matter of principle I wanted to ensure I was adding to the already-trained model, not starting from scratch. 
 
 After a quick review of `train_model()` I see that the solve is pretty simple. Just update the value of `model` to reference our newly created model. That way training begins from the 1-epoch model, not the empty model. 
  
 When the training re-runs, it will over-write the 1-epoch model with the newly updated one, which is what I want. 
 
 ## Training Run #2: Nothings a pothole
-I set `epochs = 20` and hit 'run' and wait. After just 20 min the training is complete and we can check the results.
+I set `epochs = 20`, hit 'run', and waited. After ~20 min the training is complete and we can check the results.
 
-As the training ran I watched the results of each epoch on the console. Each one includes some scores to help assess if the model is getting any better. Since I'm just experimenting I focused on `box_loss` and `mAP50`:
+As the training progresses we see the results of each epoch on the console. Each epoch includes scores to help assess if the model is getting any better. Since I'm just experimenting I focused on `box_loss` and `mAP50`:
 - **Box Loss (box_loss)** refers to how often the model drew a square around an object that wasn't a pothole. The lower this score, the better the model is performing. 
 - **Mean Average Precision @ 50% overlap (mAP50)** looks at how often the model drew a square that overlapped at least 50% with the training data. The higher this score, the better the model is performing. 
 
-With the training completed I thought it might be interesting to plot the loss and precision on a graph. 
+With the training complete I thought it might be interesting to plot the loss and precision on a graph. 
 ![boxloss_blue_vs_mAP50_orange_by_Epoch.png](/assets/2025-10-24-training_a_yolo_model/boxloss_blue_vs_mAP50_orange_by_Epoch.png)
-([data here](/assets/2025-10-24-training_a_yolo_model/boxloss_blue_vs_mAP50_orange_by_Epoch.json))
-
 
 You'll notice that as as epochs complete, box_loss goes down while mAP goes up. This means my model is getting better at predicting potholes! (right?)
 
@@ -130,21 +128,21 @@ The only way to know for sure is to run a fresh inference using this new model. 
 This is also not useful, so where did I go wrong? 
 
 ## Troubleshooting overfitting
-The first word that came to mind is "overfitting". Overfitting occurs when a model is trained for too long on a dataset that is not diverse enough. 
+The first word that came to mind is "overfitting". **Overfitting** occurs when a model is trained for too long on a dataset that is not diverse enough. 
 
 The behavior of an overfit model is that it will perform well on the trainig data, but poorly on validation data. This would translate to also performing porly on realworld data if it is not closely similar to the training data.  
 
-Maybe overfitting could be the case here: 
+Maybe overfitting could be the case here since: 
 - The kaggle dataset is small at only ~2700 images.
 - Many of them are very similar images.
-- I _did_ run for 20 epochs. Maybe that's enough to overfit?
+- I _did_ run for 20 epochs. Is that enough to overfit?
 
-I'm not sure, but the reality is that our training data shows that the model is performing well on both training data AND validation data. Its only falling short on realworld data. 
+I'm not sure, but the training data graph shows that the model is performing well on _both_ training data **and** validation data. Its only falling short on realworld data.
 
-So IMO overfitting _is not_ the likely cause of the model's woes. Whats next?
+So in my assessment overfitting _is not_ the likely cause of the model's woes. Whats next?
 
 ## Troubleshooting confidence
-So if its not the training, maybe its the inference. During inference, the model takes some parameters as inputs. One of those parameters is confidence threshold ()`conf_thresh`) which it uses to determine how liberally to detect objects.
+So if its not the training, maybe its the inference. During inference, the model takes some parameters as inputs. One of those parameters is confidence threshold (`conf_thresh`) which it uses to determine how liberally to detect objects.
 
 **Confidence threshold** refers to the certainty the model must have that it has correctly detected an object before drawing a box around it during inference. The higher this value, the fewer boxes the model will draw. The lower the value, the more boxes it will draw.
 
