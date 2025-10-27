@@ -44,7 +44,7 @@ I decided to run the Jupyter notebook in Colab for a few reasons:
 Enough semantics. At this stage I have a path forward on the **_how_**. Now lets get started.
 
 ## What is this thing?
-First things first, I cloned the repo and opened the notebook in Colab. With the notebook open I read-through each cell to get a better understanding of what the scripts are doing and how they relate to eachother:
+First things first, I cloned the repo and opened the notebook in Colab. With the notebook open I readthrough each cell to get a better understanding of what the scripts are doing and how they relate to eachother:
 
 - Cells 1 & 2 install and import dependencies to the dev environment.
 - Cell 3 defines the functions to train the model. Generally:
@@ -64,7 +64,7 @@ The yolo-training-template repo has a few example datasets that are well-suited 
 
 I think this template could work with _any_ dataset that conforms to one of the structures defined in Cell 3’s `detect_dataset_structure()`. But after a quick look at the options on Kaggle its clear that not all datasets are created equally. 
 
-I’m here to run training and inference, not troubleshoot datasets, so I'll stick with some ‘well-chosen’ datasets from `example_datasets.md` and keep it moving. 
+I’m here to run training and inference, not troubleshoot dataset structures, so I'll stick with one of theexample datasets from `example_datasets.md` and keep it moving. 
 
 I chose pothole detection dataset for a few reasons:
 - Its been done. The author of the template repo himself trained on this dataset. There are also many example of models that do the same. This means I’ll have a lot of resources to pull from when I surely run into trouble.
@@ -115,11 +115,11 @@ As the training progresses we see the results of each epoch on the console. Each
 - **Mean Average Precision @ 50% overlap (mAP50)** looks at how often the model drew a square that overlapped at least 50% with the training data. The higher this score, the better the model is performing. 
 
 With the training complete I thought it might be interesting to plot the loss and precision on a graph. 
-![boxloss_blue_vs_mAP50_orange_by_Epoch.png](/assets/2025-10-24-training_a_yolo_model/boxloss_blue_vs_mAP50_orange_by_Epoch.png)
+![Training_Progress_by_Epoch.png](/assets/2025-10-24-training_a_yolo_model/Training_Progress_by_Epoch.png)
 
-You'll notice that as as epochs complete, box_loss goes down while mAP goes up. This means my model is getting better at predicting potholes! (right?)
+You'll notice that as as epochs complete, box_loss goes down while mAP goes up. This means my model is getting better at predicting potholes! (right?) The only way to know for sure is to run a fresh inference using this new model.  
 
-The only way to know for sure is to run a fresh inference using this new model.  Unfortunately the results were... _underwhelming_. Suddenly, nothing is a pothole, until the very end when it decides the motorcycle is a pothole. 
+Unfortunately the results were... _underwhelming_. Suddenly, nothing is a pothole, until the very end when it decides the motorcycle is a pothole. 
 
 ![overhead_annotated_20e_conf40pct.gif](/assets/2025-10-24-training_a_yolo_model/overhead_annotated_20e_conf40pct.gif)
 
@@ -181,7 +181,7 @@ The validation image are mostly homogenous, and I think this confirms that the '
 
 To confirm I fed the 20-epoch model some ground-level pothole images and compared to ariel images. The results weren't definitive but I think there's a pattern here...
 
-<img src="../assets/2025-10-24-training_a_yolo_model/streetlevel_2_20e.png" width=40.7%>
+<img src="../assets/2025-10-24-training_a_yolo_model/streetlevel_2_20e.png" width=47%>
 
 ![overhead_2_20e.png](/assets/2025-10-24-training_a_yolo_model/overhead_2_20e.png)
 
@@ -194,9 +194,9 @@ So how could I fix this?
 ## Next Steps
 Since this is just an experiment there's an easy way out: abandon the overhead videos & stick to ground level. But in a real-world scenario, that's typically not an option. 
 
-I want to think through how I would solve this in the real world. I think the first-next-step is to address the domain shift by using training data actually represents my target usecase.
+I want to think through how I would solve this in the real world. The first-next-step is to address the domain shift by using training data that actually represents my target usecase.
 
-There is no shortage of places to get training data. Kaggle and Hugging Face host plenty of datasets, with plenty of 'pothole' specific ones, but the quality can vary and we risk the same situation as earlier - training data that doesn't represent the use-case. 
+There is no shortage of places to get training data. Kaggle and Hugging Face host plenty of datasets, with lots of 'pothole' specific ones, but the quality can vary and we risk the same situation as earlier - training data that doesn't represent the use-case. 
 
 I think a more reliable approach might be to create some custom training data which would involve
 1. Sourcing representative images. This could be done via licensing or taking original photography.
@@ -204,21 +204,21 @@ I think a more reliable approach might be to create some custom training data wh
 
 Once I have a this new training data I'll need to add it to the current data and retrain the model and retest inference on overhead images. 
 
-I'd like to explore creating better data down the line and write about it in a follow up post. For now identifying the domain shift and understanding _why_ the model struggled with my selected videos feelsl ike a solid and valuable stopping point. 
+I'd like to explore creating better data down the line and write about it in a follow up post. For now identifying the domain shift and understanding _why_ the model struggled with my selected videos feels like a solid and valuable stopping point. 
 
 So where did we land?
 
 ## Conclusion
 I spent a few hours trying to teach a computer vision model to identify potholes. And a few days preparing this writeup. I'll highlight some important take-aways that left an impression on me. 
 
-First, getting started was surprisngly accessible. As I mentioned earlier, I spent more time researching concepts, troubleshooting, and writing my experience than I did training, retraining, and evaluating. This is thanks in large part to mfranzon's temlate, but also because ML is a mature technology with tons of learning resources available. There is an abundance of resources out there for whoever's interested. 
+1. First, getting started was surprisngly accessible. As I mentioned earlier, I spent more time researching concepts, troubleshooting, and writing my experience than I did training, retraining, and evaluating. This is thanks in large part to mfranzon's temlate, but also because ML is a mature technology with tons of learning resources available. There is an abundance of resources out there for whoever's interested. 
 
-I ran into some hiccups with my models performance, but they weren't technical issues; just a good old fashioned product problem. I didn't start with a clear idea of the end usecase, and therefore I didn't get the output I hoped for. This is not a problem unique to ML or computer vision, but this experiment really highlights its importance. If I had started with a specific idea in mind it would've been obvious that the dataset I used wasn't the right one. (although in experimenting sometimes you just have to start and live with the tradeoffs)
+2. I ran into some hiccups with my models performance, but they weren't technical issues; just a good old fashioned product problem. I didn't start with a clear idea of the end usecase, and therefore I didn't get the output I hoped for. This is not a problem unique to ML or computer vision, but this experiment really highlights its importance. If I had started with a specific idea in mind it would've been obvious that the dataset I used wasn't the right one. (although in experimenting sometimes you just have to start and live with the tradeoffs)
 
-The main takeaway for me through this experience is just how important data is for ML applications. My model failed due to a mismatch between training data and test data; clearly defining use cases and ensuring the data strategy aligns with the product goals is critical at an early stage. 
+3. The main takeaway for me through this experience is just how important data is for ML applications. My model failed due to a mismatch between training data and test data; clearly defining use cases and ensuring the data strategy aligns with the product goals is critical at an early stage. 
 
 Despite my pothole detection model not being production ready, I'm counting this experiment as a success in terms of learning. 
-- I got a chance to working through training and evaluation issues that occur in the real world. 
+- I got a chance to work through training and evaluation issues that occur in the real world. 
 - Troubleshooting differnet rationales for my models performance gave me the opportunity to reason through them in detail and build a better understanding of them. 
 - Realizing that the domain shift was self-inflicted was a great 'aha!' moment. 
 
