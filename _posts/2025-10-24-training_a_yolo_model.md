@@ -195,7 +195,8 @@ So how could I fix this?
 
 ## Next Steps
 Since this is just an experiment, there's an easy way out: abandon the overhead videos & stick to ground level. 
-The easy way would be to pivot my application so that I'm detecting Assuming I stay on the track of detecting potholes from an ariel view, we'll need to do a few things to correct our training
+
+But that's kind of a cop-out, so I want to think through how I would solve this in the real world. we'll need to do a few things to correct our training
 - More training data that better matches the overhead usecase. Kaggle has a bunch of pothole datasets, so does Huggingface and I could cultivate my own training images, get some Kaggle has many datasets available, 
 - retrain
 - reinference
