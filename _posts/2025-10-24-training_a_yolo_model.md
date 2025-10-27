@@ -111,8 +111,8 @@ When the training re-runs, it will over-write the 1-epoch model with the newly u
 I set `epochs = 20`, hit 'run', and waited. After ~20 min the training is complete and we can check the results.
 
 As the training progresses we see the results of each epoch on the console. Each epoch includes scores to help assess if the model is getting any better. Since I'm just experimenting I focused on `box_loss` and `mAP50`:
-- **Box Loss (box_loss)** refers to how often the model drew a square around an object that wasn't a pothole. The lower this score, the better the model is performing. 
-- **Mean Average Precision @ 50% overlap (mAP50)** looks at how often the model drew a square that overlapped at least 50% with the training data. The higher this score, the better the model is performing. 
+- **Box Loss (box_loss)** refers to how accurately the model can determine the size and position of a pothole. The lower this score, the better the model is performing. 
+- **Mean Average Precision @ 50% overlap (mAP50)** looks at how often the model drew a square that overlapped at least 50% with the validation data. The higher this score, the better the model is performing. 
 
 With the training complete I thought it might be interesting to plot the loss and precision on a graph. 
 ![Training_Progress_by_Epoch.png](/assets/2025-10-24-training_a_yolo_model/Training_Progress_by_Epoch.png)
@@ -175,11 +175,11 @@ To start I went back to the kaggle dataset saw that most of the images in the tr
 - Most images only contain 1 or 2 potholes
 - Most images are of pavement streets with very few showing dirt road
 - Very few images of long roads with multiple potholes
-- NO _ariel_ images of roads with potholes
+- NO _aerial_ images of roads with potholes
 
 The validation image are mostly homogenous, and I think this confirms that the 'real world' use-case (overhead video) simply doesn't match well to the training data (ground-level potholes). 
 
-To confirm I fed the 20-epoch model some ground-level pothole images and compared to ariel images. The results weren't definitive but I think there's a pattern here...
+To confirm I fed the 20-epoch model some ground-level pothole images and compared to aerial images. The results weren't definitive but I think there's a pattern here...
 
 <img src="../assets/2025-10-24-training_a_yolo_model/streetlevel_2_20e.png" width=47%>
 
