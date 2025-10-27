@@ -165,30 +165,44 @@ Something else is afoot.
 ## Domain Shift
 So the model knows what _some_ potholes look like. And its able to pick up a lot of potholes but only at a very low confidence. 
 
-I noticed when the shot moves to way overhead, the model is unable to pick up any potholes, even at a low confidence. 
-
-I think this points to a problem related to domain shift.
+I noticed when the shot moves to way overhead, the model is unable to pick up any potholes, even at a very low confidence. I think this points to a problem related to domain shift.
 
 **Domain shift** refers to a situation where training and validation data do not match well to real-world conditions. The net result is a model really good at detecting objects when conditions are similar to the training set, but which fails otherwise. 
 
-I think thats what's at play here. So how do we confirm? 
+That feels like a pretty-good description of what's at play here. So how do we confirm? 
 
-To start I went back to the kaggle dataset saw that most of the images in the training set are: 
-- Taken up close where the pothole was neatly in frame
+To start I went back to the kaggle dataset saw that most of the images in the training set: 
+- Are taken up close where the pothole was mostly at center of frame
 - Images taken at ground level
-- Most images contain 1 or 2 potholes
-- Few images of long roads with multiple holes
-- NO ariel images
+- Most images only contain 1 or 2 potholes
+- Very few images of long roads with multiple potholes
+- NO _ariel_ images of roads with potholes
 
-The validation image are mostly the same, and I think this confirms that the 'real world' use-case (overhead video) simply doesn't match well to the training data (ground-level potholes). 
+The validation image are mostly homogenous, and I think this confirms that the 'real world' use-case (overhead video) simply doesn't match well to the training data (ground-level potholes). 
 
-This is classic domain shift, and it stems from a very simple and obvious mistake I made early on. 
+This is classic domain shift, and it stems from a very simple and obvious mistake I made early on: I didn't start with the end in mind. 
 
-I failed to follow a fundamental rule of all things: _start with the end in mind_
+At the onset I just wanted to train a model. It was only through the various iterations that I found this ariel video and decided this would be my "real world application". Since I didn't start with a clear application in, the outcome is not optimized to my ariel video. This is not a ML problem, its a PM problem! 
+
+To confirm I fed the 20-epoch model some ground-level pothole images and compared to ariel images
+
+`<insert gif of side-by-side compariosn ground level with ariel>`
+
+So how do I fix this? 
+
+## Next Steps
+Assuming we stay on the track of detecting potholes from an ariel view, we'll need to do a few things to correct our training
+- more data
+- retrain
+- reinference
 
 ## Conclusion
-When I set off to train my first model I didn't have a specific usecase in mind. Instead I was just experimenting and didn't really think that far ahead. 
+- that was more accessible than i expected 
+- I spent more time researching and doing this write-up than i did training or using the model
+- These are not novel problems. ML is a mature technology with tons of learning resources available
+- Gotta start with the end in mind or risk going off course
 
+## take aways for PMs
 
 crux: you have to start with the end in mind (duh). 
 
