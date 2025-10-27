@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Training a YOLO model"
+title: "Training a computer vision model"
 date: 2025-10-24
 ---
 ## tl;dr
