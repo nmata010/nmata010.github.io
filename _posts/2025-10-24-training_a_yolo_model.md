@@ -41,7 +41,7 @@ I decided to run the Jupyter notebook in Colab for a few reasons:
 1. I wanted to avoid setup issues. Running locally  sometimes means troubleshooting dependencies. I wanted to hit the ground running, not spend an hour chasing down some mis-matched python version.
 2. I’m  impatient. Training a model on your laptop sounds very cool, but the reality is that its pretty slow. I wanted to iterate and experiment quickly; waiting 1-4hrs to train locally would’ve killed my momentum. Colab give me access to high performance GPUs that will cut training down to minutes.
 
-Enough semantics, at this stage I have a path forward on the **_how_**. Now lets get started.
+Enough semantics. At this stage I have a path forward on the **_how_**. Now lets get started.
 
 ## What is this thing?
 First things first, I cloned the repo and opened the notebook in Colab. With the notebook open I read-through each cell to get a better understanding of what the scripts are doing and how they relate to eachother:
