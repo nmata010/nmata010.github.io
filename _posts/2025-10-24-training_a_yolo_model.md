@@ -107,7 +107,7 @@ Before doing that, I want to make sure I'm _updating_ the training on my 1-epoch
 
 After a quick review of `train_model()` I see that the solve is pretty simple. Just update the value of `model` to reference our newly created model. That way training begins from the 1-epoch model, not the empty model. 
  
-When the training re-runs, it will over-write the 1-epoch model with the newly updated one, which is what I want. 
+When the training re-runs, it will over-write the 1-epoch model with the newly updated one unless you replace `model_path` with a different location/name.
 
 ## Training Run #2: Nothings a pothole
 I set `epochs = 20`, hit 'run', and waited. After ~20 min the training is complete and we can check the results.
@@ -175,24 +175,28 @@ To start I went back to the kaggle dataset saw that most of the images in the tr
 - Are taken up close where the pothole was mostly at center of frame
 - Images taken at ground level
 - Most images only contain 1 or 2 potholes
+- Most images are of pavement streets with very few showing dirt road
 - Very few images of long roads with multiple potholes
 - NO _ariel_ images of roads with potholes
 
 The validation image are mostly homogenous, and I think this confirms that the 'real world' use-case (overhead video) simply doesn't match well to the training data (ground-level potholes). 
 
-This is classic domain shift, and it stems from a very simple and obvious mistake I made early on: I didn't start with the end in mind. 
+To confirm I fed the 20-epoch model some ground-level pothole images and compared to ariel images. The results weren't definitive but I think there's a pattern here...
 
-At the onset I just wanted to train a model. It was only through the various iterations that I found this ariel video and decided this would be my "real world application". Since I didn't start with a clear application in, the outcome is not optimized to my ariel video. This is not a ML problem, its a PM problem! 
+<img src="../assets/2025-10-24-training_a_yolo_model/streetlevel_2_20e.png" width=40.7%>
 
-To confirm I fed the 20-epoch model some ground-level pothole images and compared to ariel images
+![overhead_2_20e.png](/assets/2025-10-24-training_a_yolo_model/overhead_2_20e.png)
 
-`<insert gif of side-by-side compariosn ground level with ariel>`
+So why did this happen? I think it stems from a very simple and obvious mistake I made early on: I didn't start with the end in mind. 
 
-So how do I fix this? 
+At the onset I just wanted to train a model. It was only through iterating that decided an overhead video would be a cool proof of concept. Since I didn't start with a clear application in mind, the outcome is not optimized to my overhead video. This is not a ML problem, its a PM problem! 
+
+So how could I fix this? 
 
 ## Next Steps
-Assuming we stay on the track of detecting potholes from an ariel view, we'll need to do a few things to correct our training
-- more data
+Since this is just an experiment, there's an easy way out: abandon the overhead videos & stick to ground level. 
+The easy way would be to pivot my application so that I'm detecting Assuming I stay on the track of detecting potholes from an ariel view, we'll need to do a few things to correct our training
+- More training data that better matches the overhead usecase. Kaggle has a bunch of pothole datasets, so does Huggingface and I could cultivate my own training images, get some Kaggle has many datasets available, 
 - retrain
 - reinference
 
