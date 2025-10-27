@@ -2,6 +2,7 @@
 layout: post
 title: "Training a computer vision model"
 date: 2025-10-24
+image: /assets/2025-10-24-training_a_yolo_model/streetlevel_2_20e.png
 ---
 ## tl;dr
 - Data strategy **_is_** product strategy; especially in ML!
