@@ -8,6 +8,6 @@ author: Nick M.
 minima:
   skin: dark
   social_links:
-    - title: My LinkedIn Profile   # Tooltip text
-      icon: linkedin             # Font Awesome icon ID for LinkedIn
+    - title: My LinkedIn Profile
+      icon: linkedin
       url: "https://www.linkedin.com/in/nmatamoros/"
