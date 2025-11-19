@@ -4,22 +4,29 @@ I wanna improve my cvis model. Its trained to detect potholes but mostly at stre
 This is purely an experiment, but i want to take it seriously, so i'm going to figure out what the right data strategy is for this use-cse.
 
 To start i'm gonna set a really narrow and specific usecase.
-**Usecase:** Detect potholes from overhead view on dirt roads with little traffic. 
+
 
 I think to solve this effectively i need to:
 1. figure out what problem i wanna solve (see usecase)
+    - Ok so first things first. Lets decide what problem i want to solve. This doesn't require any special know-how just pick a problem and lets solve it. Since i ran into this domain shift problem earlier by trying to run inference on an overhead video of a dirt road I'll decide on that as my problem to solve. 
+    - **Usecase:** Detect potholes from overhead view on dirt roads with little traffic. 
 2. hypothesize what data i need to solve it
     - diverse images of dirt roads taken from overhead
     - there's gotta be more to this
     - different weather? Different angles?
+    - I'm going to have to source and annotate these. 
 3. determine a measure of success (how do i know my hypothesis is proven true or false)
-    - idk anything about this yet. i'm gonna do research
     - maybe one approach is to manually annotate one image and then use that as a benchmark? 
     - Or create a set of benchmark images?
         - i can get some frames (20?) from the video i used before and manualy annotate every single pothole to use as a benchmark set
         - I'll hve to learn how to benchmark images. but that's doable
     - success could be achieving mAP50 of 0.6
         - i have to run my 20e model on the benchmark dataset to get a baseline, and then i can set a success metric as a function of that. So like if my 20e model gets to mAP50 of 0.1, then i could target mAP50 of 0.5
+        - Ok we used roboflow to chop up the target video into 23 frames (1 per second) and manually annotated 1444 individual potholes. 
+        - This was tedious work that is a little mind-numbing for such a simple case.
+        - Clear that at scale and for complex situations labeling is a VERY complex problem. 
+        - I'm marking all the annotated images as 'test' images (roboflow), and exporting in yolov8 format since that's our yolo version from the template.
+        - I uploaded my dataset to kaggle (https://www.kaggle.com/datasets/nmata010/overhead-potholes-test-set-v1)
     - benchmarking against annotated images will give me some sense of how its performing similar to how we could see mAP improving during training in the original experiment. But what about realworld performance? Since i don't have a 'real' usecase i'm not sure how to benchmark success. i'm gonna need to do some soulsearching here.
 4. source or create the data
     - In a perfect world i'll find this dataset already annotated (fingers crossed)
