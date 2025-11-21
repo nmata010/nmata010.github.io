@@ -28,6 +28,10 @@ I think to solve this effectively i need to:
         - I'm marking all the annotated images as 'test' images (roboflow), and exporting in yolov8 format since that's our yolo version from the template.
         - I uploaded my dataset to kaggle (https://www.kaggle.com/datasets/nmata010/overhead-potholes-test-set-v1)
     - benchmarking against annotated images will give me some sense of how its performing similar to how we could see mAP improving during training in the original experiment. But what about realworld performance? Since i don't have a 'real' usecase i'm not sure how to benchmark success. i'm gonna need to do some soulsearching here.
+        - to benchmark without training i need to use model.val() which is not yet implemented in the repo template. model.val() is a function from ultralytics. We're already using model.train & model.export in the main training cell to train and save the model. 
+        - The documentation for ultralytics model functions is here: https://docs.ultralytics.com/reference/engine/model/#ultralytics.engine.model.Model
+        - I implemented a validation script using ultralytics. It takes the current model and performs validation against the validation dataset. 
+        - To achieve that i had to modify the notebook. i want to make that contribution to the OSS repo. 
 4. source or create the data
     - In a perfect world i'll find this dataset already annotated (fingers crossed)
     - in the absence of that i'll have to create the dataset and annotate it myself (sounds tedious but idk)
