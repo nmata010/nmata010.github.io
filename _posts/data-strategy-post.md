@@ -32,6 +32,9 @@ I think to solve this effectively i need to:
         - The documentation for ultralytics model functions is here: https://docs.ultralytics.com/reference/engine/model/#ultralytics.engine.model.Model
         - I implemented a validation script using ultralytics. It takes the current model and performs validation against the validation dataset. 
         - To achieve that i had to modify the notebook. i want to make that contribution to the OSS repo. 
+        - I used the script to run the validation and stored the validation results in my gdrive under /benchmarkes
+        - I still need to interpret the output. I'm not exactly sure how to read the results. 
+        
 4. source or create the data
     - In a perfect world i'll find this dataset already annotated (fingers crossed)
     - in the absence of that i'll have to create the dataset and annotate it myself (sounds tedious but idk)
