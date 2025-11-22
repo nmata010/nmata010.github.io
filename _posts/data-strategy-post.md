@@ -34,7 +34,14 @@ I think to solve this effectively i need to:
         - To achieve that i had to modify the notebook. i want to make that contribution to the OSS repo. 
         - I used the script to run the validation and stored the validation results in my gdrive under /benchmarkes
         - I still need to interpret the output. I'm not exactly sure how to read the results. 
-        - Ok i actually did update the OSS repo with the validation scripts. And i PRd that in https://github.com/mfranzon/yolo-training-template/pull/8
+        - Ok i actually did update the OSS repo with the validation scripts. And i PRd that in https://github.com/mfranzon/yolo-training-template/pull/8. Ok it merged, cool!
+    - I ran the benchmark on my 20epoch model. Its stored in gdrive under benchmarks. 
+        - Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 1.1s/it 2.1s
+            all         23       1444     0.0553     0.0284     0.0361    0.00975
+        - Basically the model achieves a 50% overlaps only 3% of the time
+        - the model achieves a 95% overlaps only <1% of the time
+        - There are some annotated images that show how bad it was compared to the manually annotated images
+    - Once i have other validation references I want to do a "proof of life" like a side by side showing inference results from this 20e model and the updated model. "proof of life"
 4. source or create the data
     - In a perfect world i'll find this dataset already annotated (fingers crossed)
     - in the absence of that i'll have to create the dataset and annotate it myself (sounds tedious but idk)
@@ -44,6 +51,7 @@ I think to solve this effectively i need to:
         - looks like this is a whole category of data called "synthetic data" which has its own rabbit holes. I'll try it out, but will abandon if needed. 
     - This whole section sounds like its gonna be a grind unless i find some neat dataset that fits. 
     - There may be an arugment for pivoting my use-case around the available datasets since this is not real-world, but that feels like cheating. 
+    - OK here we go. I got 3 stock videos and a synthetic video. 
 5. prepare the data
     - this is kinda the same as above.
     - annotated images
