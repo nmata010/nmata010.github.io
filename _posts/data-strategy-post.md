@@ -83,6 +83,24 @@ I think to solve this effectively i need to:
         - 11192025_1Epoch/best.pt (this is the first training run i did using the original data set)
         - 11192025_20Epoch/best.pt (this is the second training run i did using the original data set. I ran this _on top of_ the 1Epoch/best.pt model)
         - 11212025_1Epoch_newDS/best.pt (this is the first training run i did using the whole new dataset)
+    - Benchmarks i want to get:
+        - Model | mAP50 | Latency | Notes | Comments
+        - 11192025_1Epoch/best.pt | (control)
+        - 11192025_20Epoch/best.pt (more training epochs)
+        - 11212025_1Epoch_newDS/best.pt (new data)
+        - new20epoch_newDS/best.pt (new data & more training)
+        - meta/[SAM3](https://github.com/roboflow/notebooks/blob/main/notebooks/how-to-segment-images-with-segment-anything-3.ipynb)
+    - Models i need
+        - new20epoch_newDS # 20e fresh model using new DS
+
+| Model | mAP50 | Latency | Notes | Comments |
+| --    | --    | --      | --    | --       |
+| 1192025_1Epoch/best.pt | -- | -- | -- | Control |
+| 11192025_20Epoch/best.pt | -- | -- | -- | More training epochs |
+| 11212025_1Epoch_newDS/best.pt | -- | -- | -- | New Data |
+| new20epoch_newDS/best.pt | -- | -- | -- | New data & more training |
+| meta/SAM3 | -- | -- | -- | SOTA |
+
 7. Test the hypothesis with the newly trained model
     - I should benchmark my existing model (existing dataset; 20epochs) to get a baseline
     - I should train with new data for 1 epoch and tweak confidence to see where that gets us vs baseline on the measure of success
