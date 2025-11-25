@@ -42,6 +42,13 @@ I think to solve this effectively i need to:
         - the model achieves a 95% overlaps only <1% of the time
         - There are some annotated images that show how bad it was compared to the manually annotated images
     - Once i have other validation references I want to do a "proof of life" like a side by side showing inference results from this 20e model and the updated model. "proof of life"
+    - While prepping the new dataset I realized i could turn the bounding boxes in my benchmark set into polygons which would give better precision. Here are the new baseline benhcmarks:
+        - Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 2/2 1.1s/it 1.9s
+            all         23       1430    0.00793    0.00629    0.00421   0.000662
+        - The model achieves 50% overlap < 0.5% of the time
+        - The model achieves 95% overlap < 0.0% of the time
+        - Basically, its _really_ bad at detecting potholes in my test dataset
+    - Here's a blog about why polygons are better than boxes for this type of application. (https://www.ayadata.ai/bounding-boxes-in-computer-vision-uses-best-practices-for-labeling-and-more/)
 4. source or create the data
     - In a perfect world i'll find this dataset already annotated (fingers crossed)
     - in the absence of that i'll have to create the dataset and annotate it myself (sounds tedious but idk)
@@ -52,17 +59,30 @@ I think to solve this effectively i need to:
     - This whole section sounds like its gonna be a grind unless i find some neat dataset that fits. 
     - There may be an arugment for pivoting my use-case around the available datasets since this is not real-world, but that feels like cheating. 
     - OK here we go. I got 3 stock videos and a synthetic video. 
+    - I'm using 3 videos from pexel.com (free) and 1 video that i created with nano banans
 5. prepare the data
     - this is kinda the same as above.
     - annotated images
     - text for each image with the box information (yolo.txt)
     - idk anything about preparing training data so i need to cover a lot of ground here.
         - Roboflow has a tool to annotate and export. 
+    - I uploded them to roboflow and used meta's SAM3 to quckly identify the potholes (the irony is not lost on me that i'm using a FM to detect potholes in my training data to train a model to detect potholes.)
+    - SAM3 is SOTA so i don't feel bad that its better than my model at detecting potholes. But i did note that it really struggles with overhead images, dirt roads, and dealing with the non-road background. 
+    - Anyway sam3 did a pretty good job on a couple of the videos and completely fails at 2 others. 
+    - I manually labeled the other remaining videos. That was very tedious. Data labeling is a grind.
+    - Ok i also did some autmentation for brigness and exposure. I'll let the yolo training process deal with tilts. 
+    - I think with that i have my dataset. I added all the new labeled images to train & val (90/10 split) and kept my 'benchmark' data in the test folder. 
+    - Dataset is exported and uploaded to kaggle. We're ready to retrain.
 6. train on the data
     - done this with kaggle dataset. But idk if the scripts will work with my own data.
     - can i upload my own dataset to kaggle and use the existing scripts to download/train on them?
         - ok yea kaggle lets me upload my own dataset and gives me a handle. 
         - i just need to make sure the dataset is structured in a way that the template supports (train/val/test directories)
+    - Models i currently have:
+        - yolo11n.pt (this is the pre-trained model that's pre configured in the notebook)
+        - 11192025_1Epoch/best.pt (this is the first training run i did using the original data set)
+        - 11192025_20Epoch/best.pt (this is the second training run i did using the original data set. I ran this _on top of_ the 1Epoch/best.pt model)
+        - 11212025_1Epoch_newDS/best.pt (this is the first training run i did using the whole new dataset)
 7. Test the hypothesis with the newly trained model
     - I should benchmark my existing model (existing dataset; 20epochs) to get a baseline
     - I should train with new data for 1 epoch and tweak confidence to see where that gets us vs baseline on the measure of success
