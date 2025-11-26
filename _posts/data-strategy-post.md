@@ -93,12 +93,12 @@ I think to solve this effectively i need to:
     - Models i need
         - new20epoch_newDS # 20e fresh model using new DS
 
-| Model | mAP50 | Latency | Notes | Comments |
-| --    | --    | --      | --    | --       |
-| 1192025_1Epoch/best.pt | -- | -- | -- | Control |
-| 11192025_20Epoch/best.pt | -- | -- | -- | More training epochs |
-| 11212025_1Epoch_newDS/best.pt | -- | -- | -- | New Data |
-| new20epoch_newDS/best.pt | -- | -- | -- | New data & more training |
+| Model | mAP50 | Inference time | Hypothesis | Condition | Result
+| --    | --    | --      | --    | --  | --  |
+| 1192025_1Epoch/best.pt | 0.0045 | 26.8ms | Baseline | Control Dataset; 1epoch | Complete fail
+| 11192025_20Epoch/best.pt | 0.00421 | 10.6ms | Extending training duration will make it better | 20E on control dataset | Much faster, but complete fail
+| 11212025_1Epoch_newDS/best.pt | 0.102 | 11.9ms | Domain specific data will improve performance | Aerial dataset; 1 epoch | 20x improvement vs baseline
+| new20epoch_newDS/best.pt | 0.429 | 12.4ms | More training is more better | domain specific data set; 20epochs | 4x improvement on 1e model; 95x improvement on baseline
 | meta/SAM3 | -- | -- | -- | SOTA |
 
 7. Test the hypothesis with the newly trained model
