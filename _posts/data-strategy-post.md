@@ -101,6 +101,16 @@ I think to solve this effectively i need to:
 | new20epoch_newDS/best.pt | 0.429 | 12.4ms | More training is more better | domain specific data set; 20epochs | 4x improvement on 1e model; 95x improvement on baseline
 | meta/SAM3 | -- | -- | -- | SOTA |
 
+
+- Testing SAM3
+    - SAM3 isn't yet supported in ultralytics so i can't just call model.val() to get a 1:1 comparison. 
+    - what i'll do instead is i'll run sam3 for "pothole" on each of the images in the test set. 
+    - On each image, i'll check how many potholes sam3 counts, and i'll compare it agains the count in the labeled images
+    - I'll use that to get a success ratio which i think will serve as a good analogue for mAP50
+    - updates: 
+        - I modified the roboflow notebook to download the benchmark dataset and iterate through it
+        - I'm saving the annotated images to a folder
+        - I need to add some logging to save the object counts for each image to a csv or something. 
 7. Test the hypothesis with the newly trained model
     - I should benchmark my existing model (existing dataset; 20epochs) to get a baseline
     - I should train with new data for 1 epoch and tweak confidence to see where that gets us vs baseline on the measure of success
