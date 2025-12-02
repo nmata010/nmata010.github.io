@@ -66,10 +66,10 @@ I think to solve this effectively i need to:
     - text for each image with the box information (yolo.txt)
     - idk anything about preparing training data so i need to cover a lot of ground here.
         - Roboflow has a tool to annotate and export. 
-    - I uploded them to roboflow and used meta's SAM3 to quckly identify the potholes (the irony is not lost on me that i'm using a FM to detect potholes in my training data to train a model to detect potholes.)
+    - I uploded them to roboflow and used meta's SAM3 to quckly identify the potholes (the irony is not lost on me that i'm using a FM to detect potheledoles in my training data to train a model to detect potholes.)
     - SAM3 is SOTA so i don't feel bad that its better than my model at detecting potholes. But i did note that it really struggles with overhead images, dirt roads, and dealing with the non-road background. 
     - Anyway sam3 did a pretty good job on a couple of the videos and completely fails at 2 others. 
-    - I manually labeled the other remaining videos. That was very tedious. Data labeling is a grind.
+    - I manually lab the other remaining videos. That was very tedious. Data labeling is a grind.
     - Ok i also did some autmentation for brigness and exposure. I'll let the yolo training process deal with tilts. 
     - I think with that i have my dataset. I added all the new labeled images to train & val (90/10 split) and kept my 'benchmark' data in the test folder. 
     - Dataset is exported and uploaded to kaggle. We're ready to retrain.
@@ -98,10 +98,12 @@ I think to solve this effectively i need to:
 | 1192025_1Epoch/best.pt | 0.0045 | 26.8ms | Baseline | Control Dataset; 1epoch | Complete fail
 | 11192025_20Epoch/best.pt | 0.00421 | 10.6ms | Extending training duration will make it better | 20E on control dataset | Much faster, but complete fail
 | 11212025_1Epoch_newDS/best.pt | 0.102 | 11.9ms | Domain specific data will improve performance | Aerial dataset; 1 epoch | 20x improvement vs baseline
-| new20epoch_newDS/best.pt | 0.429 | 12.4ms | More training is more better | domain specific data set; 20epochs | 4x improvement on 1e model; 95x improvement on baseline
+| new20epoch_newDS/best.pt | 0.429 | 12.4ms | More training is more better | domain specific data set; 20epochs | 4.2x improvement on 1e model; 95x improvement on baseline
+| 12022025_350Epoch_newDS/best.pt | 0.504 | 33.4ms | Way more training is way more better | domain specific data set; 350epochs | 4.9x improvement on 1e model; 112x improvement on baseline
+| roboflow | 0.57 | -- | training optimization will yield better results | domain specific data set; 350epochs; trained on roboflow (instead of colab) | 5.6x improvement on 1e model; 126x improvement on baseline
 | meta/SAM3 | -- | -- | -- | SOTA |
 
-
+ - New model 12022025_350Epoch_newDS/best.pt took ~2h 
 - Testing SAM3
     - SAM3 isn't yet supported in ultralytics so i can't just call model.val() to get a 1:1 comparison. 
     - what i'll do instead is i'll run sam3 for "pothole" on each of the images in the test set. 
@@ -128,7 +130,94 @@ I think to solve this effectively i need to:
 
 ---
 
-# Data strategy defines outcomes
+# Data strategy to correct domain shift
 
 ## tl;dr
-- 
+- Data makes a difference: using the right data got mAP from 0.4% to 45% by changing the training data. upping training to 350e got me to x% and roboflow tweaks got me to 57%
+- with a well defined usecase the necessary data becomes more obvious
+- Data is simple but not easy
+- validating performance is a science experiment. Clear hypothesis, one variable at a time, etc.
+
+## Where do we begin?
+Last month i decided to train a cvis model. It was super easy and fun, but didn't yield the best results. There's a full write up here (insert link), but the gist of it is that i didn't really start with the end in mind, and thats how i discovered the importance of data strategy for ml applications. 
+
+My intention on the heels of that flop was to take on a more scientific approach to the hypothesis that data strategy is the difference between my cvis model and one that works.
+
+In the name of science (and to have fun things to do on the long holiday weekends) i set out to:
+- define a clear usecase
+- cultivate some training data to support that usecase
+- run some experiments to establish benchmarks
+- come to a conclusion on the hypothesis. 
+
+This is the story of how it went. We'll start at the beginning.
+
+## Defining a clear use case
+- Last time i did this i completely overlooked the "problem" part and skipped right to solution
+- that was the direct cause of failure, so i wanted to make sure it didn't happen again
+- this time, i had a clear idea for a problem i wanted to solve
+- "identify potholes in dirt roads as seen from far overhead"
+- Why this?
+    - my first expirement fell apart when testing on overhead dirt roads. 
+    - It was a clear and specific problem to address.
+    - i coudn't find any ready-made datasets, so i could experiment with collecting and preparing data
+    - it was similar enough to what other ppl have done so i could lean on others
+
+## Deciding on a benchmark
+- So we know what problem we want to solve, now we need to define a measure for knowing when we've solved it (or at least proven traction towards a solution)
+- Come up with lots of diverse data is great, but i need to have a clear and un-changing benchmark to baseline against. 
+- I decided to use the same video that fell flat on that previous training. I decided to use that video as my benchmark test set. 
+- Doing this would mimic a real world use case where the model has to predict potholes on a set of images its never seen before. 
+- I decided on 50% mAP50 as the POC viability benchmark. If i could achieve 50% on mAP50, i would be satisfied. 
+- I used roboflow to pull frames fromt this video and manually annotated them (~1500 potholes). I marked these as 'test' in my dataset to make sure they don't mix with the training data. This is my 'gold standard' dataset that i'll benchmark against. 
+
+## Data strategy
+OK i've got a clear use case and a clear way of knowing when i've solved it. Time to talk strategy. How am i going to collect, manage, and use relevant training data
+
+- What data is relevant
+    - Ok so i know what problem i want to solve, and this sort of obviates the data i need: Overhead images of dirt roads with potholes. 
+    - Seems simple enough, but consider that dirt roads are often surrounded by different nature landscapes, which look differently depending on the season and weather. Sunlight also plays a factor. 
+    - For this set of experiments i decided i'd need all of the above.
+- How do we source it (ethically)
+    - no shortage of dirt road youtube videos to scrape, but that's kind of scammy
+    - Decided to use pexels.com which has royalty free stock imagry. Bonus points for a semantic search that works pretty well 
+    - Also figured it might be interesting to experiment with synthetic data so i put together a short clip using Veo3
+- How much data do we need? 
+    - I don't know, but i wanted to land somewhere 'robust yet achievable'. I arbitrarily chose 500 images as a target and  decided to pull 1-2 frames per second from each video.
+    - Wanted to make sure i had diverse weather, seasons, backgrounds, and overhead perspectives. 
+    - I selected 5 videos totaling 131 seconds. Using 1-2 frames per second got me to around 250 images. After transformations and augmentation i landed at 558 images across training, validation, and test. (available here//link to kaggle)
+- How does it map to our desired outcome
+    - I'm not sure what to write here. 
+
+## Preparing the data
+- Since i didn't find any compelling 'overhead, dirt-road, potholes in different environments and different weather" datasets, i decided i would produce my own. 
+- the main take away is that data prep is simple, not easy (are all road defecs potholes? is a puddle a pothole? how do you decide?)
+- In researching tools for annotation i came across roboflow and used that. It let me annotate pretty easily, along with preparing the dataset for publishing. 
+- i also cultivated a 'gold standard' dataset. This also involved manually labeling ~1500 potholes. 
+- BTW, i tried using sam3 to do some labling for me, but it was hit or miss. More on that later. 
+- Finally, with all the manual annotations done, i exported from roboflow, uploaded to kaggle and i'm ready to start running experiments
+
+## Running experiments
+- Train a bunch of models
+- Update the jupyter notebook to include a model validation function
+- Ran it 
+
+
+## Data makes a difference
+- Data makes a difference. And a big one at that. 
+
+
+## The scientific method
+I really wanted this to be scientific and not just 'trying things til something works'. This is the real process you have to follow in the real world. You have to control variables to create reliable observations, otherwise you don't know what worked and why. 
+
+My plan is pretty simple:
+- Observation: The models trained on street-level potholes performed poorly on aerial dirt-road usecase. (1e mAP50: 0.0045, 20e mAP50: 0.00421)
+- Hypothesis: This is a domain shift resulting from training data that does not match the usecase. Using domain specific training data will allow me to achieve mAP50 of 0.5
+- Experiment: Train various models and change one single idk idk idk this doesnt make sense for so many experiments unless i'm gonna write a whole paper on it.
+
+
+- observation
+- question
+- hypothesis
+- experiment
+- analysis
+- conclusion
