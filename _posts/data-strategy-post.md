@@ -117,9 +117,18 @@ I think to solve this effectively i need to:
         - I wrote some code to do that and save a labels.txt file for each image that sam3 processes.
         - now we have a sam3 label file that i can use to compare against the test image label file.
         - calculating the mAP across SAM3 and my test dataset requires some polygon math that is out of my depth. This might be a good next-step
+        - theres a thread here about transformer models (sam3) vs CNNs (yolo)
 7. Test the hypothesis with the newly trained model
     - I should benchmark my existing model (existing dataset; 20epochs) to get a baseline
     - I should train with new data for 1 epoch and tweak confidence to see where that gets us vs baseline on the measure of success
     - then i can retrain for more epohchs and retest against the measure of success.
     - at this point i can start drawing conclusions
 8. determine next steps (either i was right, in which case we're done. Or i was wrong, in which case i start over with a different hypothesis)
+
+
+---
+
+# Data strategy defines outcomes
+
+## tl;dr
+- 
