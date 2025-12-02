@@ -111,6 +111,12 @@ I think to solve this effectively i need to:
         - I modified the roboflow notebook to download the benchmark dataset and iterate through it
         - I'm saving the annotated images to a folder
         - I need to add some logging to save the object counts for each image to a csv or something. 
+        - ok the csv is done. I'm going to now try to get polygon positions (to try and compare to mAP)
+        - now i've included some code to get polygon positions from SAM3, but they're coming in as absolute pixel coordinates which is different from my test data labels (yolo format)
+        - alright, i learned how to convert the absolute coordinates (from SAM3) to relative coordinates that look similar to my yolo test set. 
+        - I wrote some code to do that and save a labels.txt file for each image that sam3 processes.
+        - now we have a sam3 label file that i can use to compare against the test image label file.
+        - calculating the mAP across SAM3 and my test dataset requires some polygon math that is out of my depth. This might be a good next-step
 7. Test the hypothesis with the newly trained model
     - I should benchmark my existing model (existing dataset; 20epochs) to get a baseline
     - I should train with new data for 1 epoch and tweak confidence to see where that gets us vs baseline on the measure of success
