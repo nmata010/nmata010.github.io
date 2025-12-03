@@ -133,7 +133,7 @@ I think to solve this effectively i need to:
 # Data strategy to correct domain shift
 
 ## tl;dr
-- Data makes a difference: using the right data got mAP from 0.4% to 45% by changing the training data. upping training to 350e got me to x% and roboflow tweaks got me to 57%
+- Data makes a difference: using the right data got mAP from 0.4% to 45% by changing the training data. upping training to 350e got me to 50.4% and roboflow hyperparameters got me to 57%
 - with a well defined usecase the necessary data becomes more obvious
 - Data is simple but not easy
 - validating performance is a science experiment. Clear hypothesis, one variable at a time, etc.
@@ -221,3 +221,16 @@ My plan is pretty simple:
 - experiment
 - analysis
 - conclusion
+
+
+## The Experiments
+
+We ran a series of experiments, treating each as a variable to isolate what actually drives performance.
+
+| Experiment | Setup | Result (mAP50) | Key Insight |
+| :--- | :--- | :--- | :--- |
+| **1. The Control** (Baseline) | Original street-level model vs. aerial benchmark set. | **0.4%** | **Establishes the failure.** Proves zero transferability between domains (Street $\to$ Aerial). |
+| **2. The Pivot** (V2 Alpha) | New aerial data, trained for only **1 epoch**. | **10.2%** | **Confirms Hypothesis.** A "dumb" model with relevant data beats a "smart" model with wrong data (Relevance > Duration). |
+| **3. The Deep Train** (V2 Final) | New aerial data, trained for **20 $\to$ 350 epochs**. | **42.9% $\to$ 50.4%** | **Data Strategy = Product Strategy.** Success metric met. Diminishing returns on compute (adding 330 epochs only gained ~8%). |
+| **4. The Optimization** (Roboflow) | Auto-tuned hyperparameters via Roboflow. | **57%** | **The Final Squeeze.** Tools can optimize performance once the core data strategy is solid. |
+| **5. The SOTA Benchmark** (SAM3) | Specialized YOLO vs. Meta's SAM3 Foundation Model. | **Specialist Won** (Anecdotal) | **David vs. Goliath.** For high-context tasks, a tiny, focused specialist often beats a massive generalist. |
