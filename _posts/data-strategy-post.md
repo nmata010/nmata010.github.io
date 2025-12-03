@@ -197,6 +197,35 @@ OK i've got a clear use case and a clear way of knowing when i've solved it. Tim
 - Finally, with all the manual annotations done, i exported from roboflow, uploaded to kaggle and i'm ready to start running experiments
 
 ## Running experiments
+- Ok so i've got a dataset, a benchmark, and a list of experiments. I'm ready to start training models and checking performace.
+- I made some tweaks to the colab notebook to add support for model validation. That was a fun sidequest that resulted in my first OSS contribution. 
+- Control group: 
+    - first up was establishing a baseline using a 'control group' of models. 
+    - I want use the models i trained in my previous experiments to establish a baseline for how they perform on my use-case. 
+    - The expectation is that they would do poorly, and sure enough they only landed at `mAP50 = 0.45%` & `mAP50 = 0.42%` for the 1e and 20e respsectively. 
+    - The baseline is set. Any notable improvement on those scores is worth exploring. 
+    - The working hypothesis at this stage is that the poor performance is the result of domain shift. The only way to test is to train a new model with new dataset: enter nwe models
+- Aerial_1e: 
+    - trained on aerial dataset for 1epoch
+    - hypothesis is that new dataset will result in better mAP50 because the training data is more relevant to the usecase. 
+    - Observation is that we get a jump in performance with `mAP50=10.2%`
+    - Conclusion is that we're on to something. I think this confirms domain shift as the problem of the previous models. Its also giving good signal that we've got the right training data, but still falls far short of the benchmark of 50% we're trying to hit. 
+- Aerial_20e:
+    - trained on aerial dataset for 20epoch
+    - hypothesis is that training for longer will result in significantly improved mAP50
+    - observation is that we do get a jump in performance with `mAP50=42.9%`
+    - conclusion is that training for longer on the same data set does improve performance significantly. We clearly have the right data and are heading in the right directioin, but again fall short of the 50% benchmark. The performance gains are non-linear, training for 20x longer only yielded 4x improvement
+- Aerial_350e:
+    - trained on aerial dataset for 350epochs
+    - hypothesis is that since performance gains are non-linear, we should expect the improvements to trail off. Training for will achieve slight improvements
+    - observation is that we do get a milder but still very significant improvement and achieve `mAP50=50.4%`. This took around 2h to train and i struggled with colab limits. This maybe near the upper bound of the training i can do on colab for free. 
+    - conclusion is that the performance improvements indeed trail off but not before we reached our benchmark of mAP50=50%. This confirms that we can achieve a POC grade performance with a relatively small training set. How can we squeeze more out of the same data?
+- Roboflow_Aerial_350e:
+    - trained on aerial dataset for 350epochs; roboflow does hyperparameter tuning in the background. 
+    - hypothesis is that we'll see a very small improvement by leveraging hyper parameter tuning
+    - observation is that we see a small but meaningful improvement of 13% by using hyper parameter tuning.
+    - conclusion is that getting to production grade (mAP50=95%) likely requires more robust data _and_ hyper parameter tuning
+- 
 - Train a bunch of models
 - Update the jupyter notebook to include a model validation function
 - Ran it 
