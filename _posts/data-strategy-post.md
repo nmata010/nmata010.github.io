@@ -226,14 +226,15 @@ OK i've got a clear use case and a clear way of knowing when i've solved it. Tim
     - observation is that we see a small but meaningful improvement of 13% by using hyper parameter tuning.
     - conclusion is that getting to production grade (mAP50=95%) likely requires more robust data _and_ hyper parameter tuning. 
 
-| # | Experiment | Hypothesis | Dataset | Epochs | Result (mAP50) | Observation | Conclusion
-| -- | -- | -- | -- | -- | -- | -- | -- 
-| 0 | Control_1e | -- | Street-level potholes | 1 | **0.45%** | Model fails on aerial images | **Baseline**
-| 1 | Control_20e | ??? | Street-level potholes | 20 | **0.42%** | Model fails on aerial images. | Additional training specializes the model on street-level potholes, but does not address domain shift
-| 2 | Aerial_1e | Using training images releavnt to the test case will make the model perform better | Aerial view potholes | 1 | **10.2%** | Significantly outperforms basilne |**Confirms Hypothesis.** A "dumb" model with relevant data beats a "smart" model with wrong data (Relevance > Duration). |
-| 2 | **3. The Deep Train** (V2 Final) | New aerial data, trained for **20 $\to$ 350 epochs**. | **42.9% $\to$ 50.4%** | **Data Strategy = Product Strategy.** Success metric met. Diminishing returns on compute (adding 330 epochs only gained ~8%). |
-| 3 | **4. The Optimization** (Roboflow) | Auto-tuned hyperparameters via Roboflow. | **57%** | **The Final Squeeze.** Tools can optimize performance once the core data strategy is solid. |
-| 4 | **5. The SOTA Benchmark** (SAM3) | Specialized YOLO vs. Meta's SAM3 Foundation Model. | **Specialist Won** (Anecdotal) | **David vs. Goliath.** For high-context tasks, a tiny, focused specialist often beats a massive generalist. |
+| # | Model | Hypothesis  | Dataset | Epochs | Result (mAP50) | Observation | Conclusion |
+| -- | -- | -- | -- | -- | -- | -- | -- |
+| 0 | Control_1e | -- | Street-level potholes | 1 | **0.45%** | Model fails on aerial images | **Baseline** |
+| 1 | Control_20e | More training on same data will correct domain shift | Street-level potholes | 20 | **0.42%** | Model fails on aerial images. Underperforms baseline | **Hypothesis Rejected** |
+| 2 | Aerial_1e | Training on images more releavnt to the test case will correct domain shift | Aerial view potholes | 1 | **10.2%** | Significantly outperforms basilne but falls well short of benchmark (50%) |**Hypothesis Supported** |
+| 3 | Aerial_20e | More training on same data will improve model performance | Aerial view potholes | 20 | **42.9%** | -- | -- |
+| 4 | Aerial_350e | -- | Aerial view potholes | 350 | **50.4%** | -- | -- |
+| 5 | Roboflow_Aerial_350e | hyper-parameter tuning = better perf | Aerial view potholes | 350 | **57%** | -- | -- |
+| xyz | meta/SAM3 | -- | -- | --| -- | -- | -- |
 
 ## Data makes a difference
 - Data makes a difference. And a big one at that. 
