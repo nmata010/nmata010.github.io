@@ -231,13 +231,14 @@ OK i've got a clear use case and a clear way of knowing when i've solved it. Tim
 | 0 | Control_1e | -- | Street-level potholes | 1 | **0.45%** | Model fails on aerial images | **Baseline** |
 | 1 | Control_20e | More training on same data will correct domain shift | Street-level potholes | 20 | **0.42%** | Model fails on aerial images. Underperforms baseline | **Hypothesis Rejected** |
 | 2 | Aerial_1e | Training on images more releavnt to the test case will correct domain shift | Aerial view potholes | 1 | **10.2%** | Significantly outperforms basilne but falls well short of benchmark (50%) |**Hypothesis Supported** |
-| 3 | Aerial_20e | More training on same data will improve model performance | Aerial view potholes | 20 | **42.9%** | -- | -- |
+| 3 | Aerial_20e | More training on same data will improve model performance | Aerial view potholes | 20 | **42.9%** | Big performance improvement | -- |
 | 4 | Aerial_350e | -- | Aerial view potholes | 350 | **50.4%** | -- | -- |
 | 5 | Roboflow_Aerial_350e | hyper-parameter tuning = better perf | Aerial view potholes | 350 | **57%** | -- | -- |
 | xyz | meta/SAM3 | -- | -- | --| -- | -- | -- |
 
 ## Data makes a difference
 - Data makes a difference. And a big one at that. 
+- I want to say something about diminishing returns (the diminishing returns are also visible in the 350e training images)
 
 
 ## The scientific method
