@@ -224,12 +224,16 @@ OK i've got a clear use case and a clear way of knowing when i've solved it. Tim
     - trained on aerial dataset for 350epochs; roboflow does hyperparameter tuning in the background. 
     - hypothesis is that we'll see a very small improvement by leveraging hyper parameter tuning
     - observation is that we see a small but meaningful improvement of 13% by using hyper parameter tuning.
-    - conclusion is that getting to production grade (mAP50=95%) likely requires more robust data _and_ hyper parameter tuning
-- 
-- Train a bunch of models
-- Update the jupyter notebook to include a model validation function
-- Ran it 
+    - conclusion is that getting to production grade (mAP50=95%) likely requires more robust data _and_ hyper parameter tuning. 
 
+| # | Experiment | Hypothesis | Dataset | Epochs | Result (mAP50) | Observation | Conclusion
+| -- | -- | -- | -- | -- | -- | -- | -- 
+| 0 | Control_1e | -- | Street-level potholes | 1 | **0.45%** | Model fails on aerial images | **Baseline**
+| 1 | Control_20e | ??? | Street-level potholes | 20 | **0.42%** | Model fails on aerial images. | Additional training specializes the model on street-level potholes, but does not address domain shift
+| 2 | Aerial_1e | Using training images releavnt to the test case will make the model perform better | Aerial view potholes | 1 | **10.2%** | Significantly outperforms basilne |**Confirms Hypothesis.** A "dumb" model with relevant data beats a "smart" model with wrong data (Relevance > Duration). |
+| 2 | **3. The Deep Train** (V2 Final) | New aerial data, trained for **20 $\to$ 350 epochs**. | **42.9% $\to$ 50.4%** | **Data Strategy = Product Strategy.** Success metric met. Diminishing returns on compute (adding 330 epochs only gained ~8%). |
+| 3 | **4. The Optimization** (Roboflow) | Auto-tuned hyperparameters via Roboflow. | **57%** | **The Final Squeeze.** Tools can optimize performance once the core data strategy is solid. |
+| 4 | **5. The SOTA Benchmark** (SAM3) | Specialized YOLO vs. Meta's SAM3 Foundation Model. | **Specialist Won** (Anecdotal) | **David vs. Goliath.** For high-context tasks, a tiny, focused specialist often beats a massive generalist. |
 
 ## Data makes a difference
 - Data makes a difference. And a big one at that. 
@@ -256,10 +260,3 @@ My plan is pretty simple:
 
 We ran a series of experiments, treating each as a variable to isolate what actually drives performance.
 
-| Experiment | Setup | Result (mAP50) | Key Insight |
-| :--- | :--- | :--- | :--- |
-| **1. The Control** (Baseline) | Original street-level model vs. aerial benchmark set. | **0.4%** | **Establishes the failure.** Proves zero transferability between domains (Street $\to$ Aerial). |
-| **2. The Pivot** (V2 Alpha) | New aerial data, trained for only **1 epoch**. | **10.2%** | **Confirms Hypothesis.** A "dumb" model with relevant data beats a "smart" model with wrong data (Relevance > Duration). |
-| **3. The Deep Train** (V2 Final) | New aerial data, trained for **20 $\to$ 350 epochs**. | **42.9% $\to$ 50.4%** | **Data Strategy = Product Strategy.** Success metric met. Diminishing returns on compute (adding 330 epochs only gained ~8%). |
-| **4. The Optimization** (Roboflow) | Auto-tuned hyperparameters via Roboflow. | **57%** | **The Final Squeeze.** Tools can optimize performance once the core data strategy is solid. |
-| **5. The SOTA Benchmark** (SAM3) | Specialized YOLO vs. Meta's SAM3 Foundation Model. | **Specialist Won** (Anecdotal) | **David vs. Goliath.** For high-context tasks, a tiny, focused specialist often beats a massive generalist. |
