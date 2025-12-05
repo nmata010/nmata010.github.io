@@ -133,10 +133,10 @@ I think to solve this effectively i need to:
 # Data strategy to correct domain shift
 
 ## tl;dr
-- Data makes a difference: using the right data got mAP from 0.4% to 45% by changing the training data. upping training to 350e got me to 50.4% and roboflow hyperparameters got me to 57%
-- with a well defined usecase the necessary data becomes more obvious
-- Data is simple but not easy
-- validating performance is a science experiment. Clear hypothesis, one variable at a time, etc.
+- **Clear problem statements are half the battle.** Well defined usecases obviate data requirements. Without this, my experimentation was destined to fail.
+- **Data makes a big difference (duh!).** By selectimg the right data alone i saw performance improvements by 2 OOM. Tweaking training parameters got me to the target benchmark.
+- **Data curation is simple, _not easy_.** Sourcing, annotating, and processing data is a grind but its the _most_ important task and where HITL matters most. Afterall, model quality is _derived_ from data quality.
+- **Validation closes the loop.** One at a timevalidating performance is a science experiment. Clear hypothesis, one variable at a time, etc.
 
 ## Where do we begin?
 Last month i decided to train a cvis model. It was super easy and fun, but didn't yield the best results. There's a full write up here (insert link), but the gist of it is that i didn't really start with the end in mind, and thats how i discovered the importance of data strategy for ml applications. 
@@ -199,42 +199,62 @@ OK i've got a clear use case and a clear way of knowing when i've solved it. Tim
 ## Running experiments
 - Ok so i've got a dataset, a benchmark, and a list of experiments. I'm ready to start training models and checking performace.
 - I made some tweaks to the colab notebook to add support for model validation. That was a fun sidequest that resulted in my first OSS contribution. 
-- Control group: 
-    - first up was establishing a baseline using a 'control group' of models. 
-    - I want use the models i trained in my previous experiments to establish a baseline for how they perform on my use-case. 
-    - The expectation is that they would do poorly, and sure enough they only landed at `mAP50 = 0.45%` & `mAP50 = 0.42%` for the 1e and 20e respsectively. 
-    - The baseline is set. Any notable improvement on those scores is worth exploring. 
-    - The working hypothesis at this stage is that the poor performance is the result of domain shift. The only way to test is to train a new model with new dataset: enter nwe models
-- Aerial_1e: 
-    - trained on aerial dataset for 1epoch
-    - hypothesis is that new dataset will result in better mAP50 because the training data is more relevant to the usecase. 
-    - Observation is that we get a jump in performance with `mAP50=10.2%`
-    - Conclusion is that we're on to something. I think this confirms domain shift as the problem of the previous models. Its also giving good signal that we've got the right training data, but still falls far short of the benchmark of 50% we're trying to hit. 
-- Aerial_20e:
-    - trained on aerial dataset for 20epoch
-    - hypothesis is that training for longer will result in significantly improved mAP50
-    - observation is that we do get a jump in performance with `mAP50=42.9%`
-    - conclusion is that training for longer on the same data set does improve performance significantly. We clearly have the right data and are heading in the right directioin, but again fall short of the 50% benchmark. The performance gains are non-linear, training for 20x longer only yielded 4x improvement
-- Aerial_350e:
-    - trained on aerial dataset for 350epochs
-    - hypothesis is that since performance gains are non-linear, we should expect the improvements to trail off. Training for will achieve slight improvements
-    - observation is that we do get a milder but still very significant improvement and achieve `mAP50=50.4%`. This took around 2h to train and i struggled with colab limits. This maybe near the upper bound of the training i can do on colab for free. 
-    - conclusion is that the performance improvements indeed trail off but not before we reached our benchmark of mAP50=50%. This confirms that we can achieve a POC grade performance with a relatively small training set. How can we squeeze more out of the same data?
-- Roboflow_Aerial_350e:
-    - trained on aerial dataset for 350epochs; roboflow does hyperparameter tuning in the background. 
-    - hypothesis is that we'll see a very small improvement by leveraging hyper parameter tuning
-    - observation is that we see a small but meaningful improvement of 13% by using hyper parameter tuning.
-    - conclusion is that getting to production grade (mAP50=95%) likely requires more robust data _and_ hyper parameter tuning. 
+### Control group: 
+- first up was establishing a baseline using a 'control group' of models. 
+- I want use the models i trained in my previous experiments to establish a baseline for how they perform on my use-case. 
+- The expectation is that they would do poorly, and sure enough they only landed at `mAP50 = 0.45%` & `mAP50 = 0.42%` for the 1e and 20e respsectively. 
+- The baseline is set. Any notable improvement on those scores is worth exploring. 
+- The working hypothesis at this stage is that the poor performance is the result of domain shift. The only way to test is to train a new model with new dataset: enter nwe models
+### Aerial_1e: 
+- trained on aerial dataset for 1epoch
+- hypothesis is that new dataset will result in better mAP50 because the training data is more relevant to the usecase. 
+- Observation is that we get a jump in performance with `mAP50=10.2%`
+- Conclusion is that we're on to something. I think this confirms domain shift as the problem of the previous models. Its also giving good signal that we've got the right training data, but still falls far short of the benchmark of 50% we're trying to hit. 
+### Aerial_20e:
+- trained on aerial dataset for 20epoch
+- hypothesis is that training for longer will result in significantly improved mAP50
+- observation is that we do get a jump in performance with `mAP50=42.9%`
+- conclusion is that training for longer on the same data set does improve performance significantly. We clearly have the right data and are heading in the right directioin, but again fall short of the 50% benchmark. The performance gains are non-linear, training for 20x longer only yielded 4x improvement
+- here we see major improvements
+### Aerial_350e:
+- trained on aerial dataset for 350epochs
+- hypothesis is that since performance gains are non-linear, we should expect the improvements to trail off. Training for will achieve slight improvements
+- observation is that we do get a milder but still very significant improvement and achieve `mAP50=50.4%`. This took around 2h to train and i struggled with colab limits. This maybe near the upper bound of the training i can do on colab for free. 
+- conclusion is that the performance improvements indeed trail off but not before we reached our benchmark of mAP50=50%. This confirms that we can achieve a POC grade performance with a relatively small training set. How can we squeeze more out of the same data?
+- here we start to see diminishing returns, but still notable improvements 
+### Roboflow_Aerial_350e:
+- trained on aerial dataset for 350epochs; roboflow does hyperparameter tuning in the background. 
+- hypothesis is that we'll see a very small improvement by leveraging hyper parameter tuning
+- observation is that we see a small but meaningful improvement of 13% by using hyper parameter tuning.
+- conclusion is that getting to production grade (mAP50=95%) likely requires more robust data _and_ hyper parameter tuning. 
 
+### Summary Table
 | # | Model | Hypothesis  | Dataset | Epochs | Result (mAP50) | Observation | Conclusion |
 | -- | -- | -- | -- | -- | -- | -- | -- |
 | 0 | Control_1e | -- | Street-level potholes | 1 | **0.45%** | Model fails on aerial images | **Baseline** |
 | 1 | Control_20e | More training on same data will correct domain shift | Street-level potholes | 20 | **0.42%** | Model fails on aerial images. Underperforms baseline | **Hypothesis Rejected** |
-| 2 | Aerial_1e | Training on images more releavnt to the test case will correct domain shift | Aerial view potholes | 1 | **10.2%** | Significantly outperforms basilne but falls well short of benchmark (50%) |**Hypothesis Supported** |
-| 3 | Aerial_20e | More training on same data will improve model performance | Aerial view potholes | 20 | **42.9%** | Big performance improvement | -- |
-| 4 | Aerial_350e | -- | Aerial view potholes | 350 | **50.4%** | -- | -- |
-| 5 | Roboflow_Aerial_350e | hyper-parameter tuning = better perf | Aerial view potholes | 350 | **57%** | -- | -- |
-| xyz | meta/SAM3 | -- | -- | --| -- | -- | -- |
+| 2 | Aerial_1e | Training on images more releavnt to the test case will correct domain shift | Aerial view potholes | 1 | **10.2%** | Significantly outperforms basilne (2.2 OOM) but falls well short of benchmark (50%) |**Hypothesis Supported** |
+| 3 | Aerial_20e | More training on same data will improve model performance | Aerial view potholes | 20 | **42.9%** | Big performance improvement (4.2x). Tracking towards benchmark but still falls short. Training time relates to performance non-linearly | **Hypothesis Supported** |
+| 4 | Aerial_350e | A long training run will yield better performance but a reduced rate. | Aerial view potholes | 350 | **50.4%** | Achieves benchmark! Some improvement (17%) | **Hypothesis Supported** |
+| 5 | Roboflow_Aerial_350e | hyper-parameter tuning = better perf | Aerial view potholes | 350 | **57%** | -- | **Hypothesis Supported** |
+| 6 | meta/SAM3 | SOTA model will achieve 50% benchmark with no fine-tuning on domain data | -- | --| xx% | Falls far short on average (though does a very well on a few of the individual frames). | **Hypothesis Rejected** |
+
+## So what? (conclusion)
+
+## Now what?
+- cool I did it:
+    - settled on a problem to solve
+    - designed a data strategy that maps to the problem
+    - trained a bunch of models to test different approaches
+    - achieved a POC grade level of performance
+- Whats next?
+    - Getting to a production level of performance for fun?
+    - Putthing this model on a drone and selling it to rural municipalities?
+    - abandoning it altogether? 
+Idk, but this was fun and i leraned a lot:
+- data makes or breaks the product. Wrong data = no viable outcomes. cut and dry. 
+- Figuring out what experiments to run is both an art and science. It requires thoughtfulness to avoid doing a bunch of things that aren't really helping get closer to a solution.
+- idk what else i learned
 
 ## Data makes a difference
 - Data makes a difference. And a big one at that. 
