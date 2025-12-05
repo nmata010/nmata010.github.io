@@ -150,9 +150,9 @@ So as to not leave any loose threads from my last post (and to have fun things t
 - Train some models to check their performance on my usecase.
 - Come to a conclusion on what gets me to (or keeps me from) achieving the success criteria. 
 
-Like all things, this seems simple on the surface, but required me to navigate a lot of nuance in domains I'm not that familiar with (see Dunning-Kruger effect).
+Like all things, this seems simple on the surface, but required navigating a lot of nuance in domains I'm not that familiar with (see [Dunning-Kruger effect](https://resilienceshield.com/app/uploads/2021/05/Mt-Stupid-1-1.png)).
 
-We'll start at the beginning
+We'll start at the beginning.
 
 ## Defining a clear use case
 - Last time i did this i completely overlooked the "problem" part and skipped right to solution
