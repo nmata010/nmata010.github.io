@@ -130,26 +130,29 @@ I think to solve this effectively i need to:
 
 ---
 
-# Data strategy to correct domain shift
+# Title: Data strategy to correct domain shift
 
 ## tl;dr
 - **Clear problem statements are half the battle.** Well defined usecases obviate data requirements. Without this, my experimentation was destined to fail.
 - **Data makes a big difference (duh!).** By selectimg the right data alone i saw performance improvements by 2 OOM. Tweaking training parameters got me to the target benchmark.
 - **Data curation is simple, _not easy_.** Sourcing, annotating, and processing data is a grind but its the _most_ important task and where HITL matters most. Afterall, model quality is _derived_ from data quality.
-- **Validation closes the loop.** One at a timevalidating performance is a science experiment. Clear hypothesis, one variable at a time, etc.
+- **Clear outcomes flow from controlled variables.** Trying a bunch of things is the best way to know what does/doesn't work. But changing one variable at a time is key to drawing a line between input changes and performance improvements.
 
 ## Where do we begin?
-Last month i decided to train a cvis model. It was super easy and fun, but didn't yield the best results. There's a full write up here (insert link), but the gist of it is that i didn't really start with the end in mind, and thats how i discovered the importance of data strategy for ml applications. 
+Last month I decided to train a cvis model. It was super easy and fun, but didn't net the best results. There's a [full write up here](/_posts/2025-10-24-training_a_yolo_model.md), but the gist of it is that I didn't really start with the end in mind, and thats how I discovered the importance of data strategy for ML applications. 
 
-My intention on the heels of that flop was to take on a more scientific approach to the hypothesis that data strategy is the difference between my cvis model and one that works.
+My intention on the heels of that flop was to take on a more thoughtful approach to the notion that _data strategy_ is the difference between a cvis model that works and mine.
 
-In the name of science (and to have fun things to do on the long holiday weekends) i set out to:
-- define a clear usecase
-- cultivate some training data to support that usecase
-- run some experiments to establish benchmarks
-- come to a conclusion on the hypothesis. 
+So as to not leave any loose threads from my last post (and to have fun things to do over the long thanksgiving weekend) I set out to solve my domain shit problem by:
+- Defining a clear usecase to serve as a 'what' and 'why' anchor for my experimentation.
+- Decide on 'success metric' for this usecase that will provide an objective measurement on performance.
+- Cultivate and prepare relevant training data in support of my usecase.
+- Train some models to check their performance on my usecase.
+- Come to a conclusion on what gets me to (or keeps me from) achieving the success criteria. 
 
-This is the story of how it went. We'll start at the beginning.
+Like all things, this seems simple on the surface, but required me to navigate a lot of nuance in domains I'm not that familiar with (see Dunning-Kruger effect).
+
+We'll start at the beginning
 
 ## Defining a clear use case
 - Last time i did this i completely overlooked the "problem" part and skipped right to solution
@@ -240,6 +243,12 @@ OK i've got a clear use case and a clear way of knowing when i've solved it. Tim
 | 6 | meta/SAM3 | SOTA model will achieve 50% benchmark with no fine-tuning on domain data | -- | --| xx% | Falls far short on average (though does a very well on a few of the individual frames). | **Hypothesis Rejected** |
 
 ## So what? (conclusion)
+- yea the data made the biggest differene
+- long training runs also made a significant difference
+- so did hyperparamater tweaking
+- Confirms that data is king
+- Got to POC level benchmark
+- "and therefore...?" what do i conclude after all this? 
 
 ## Now what?
 - cool I did it:
