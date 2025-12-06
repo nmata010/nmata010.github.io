@@ -163,9 +163,20 @@ In the real world I would want to validate and 'harden' this problem definition 
 
 So I've got my target. **Usecase:** `Detect potholes from overhead view on dirt roads with little traffic.` 
 
-With my problem definition set, the next step is to define a measure of success.
+Now that I know what problem I want to solve, I'll need a metric to tell me when I've solved it.
 
 ## Deciding on a benchmark
+A clear and narrow problem definition helps determining whether or not the model is performant seems obvious: Either it detects the potholes under the stated conditions or it doesnt. 
+
+But its not that simple for a few reasons. 
+1. **What is a pothole?** 
+    - >pothole | noun | a depression or hollow in a road surface caused by wear or sinking
+    - how do we know if a depression is a puddle or pothole?
+    - what about long potholes/? 
+    - ultimately i decided on 
+2. how do you measure successful detection?
+3. What threshold is realistic under current constraints. 
+
 - So we know what problem we want to solve, now we need to define a measure for knowing when we've solved it (or at least proven traction towards a solution)
 - Come up with lots of diverse data is great, but i need to have a clear and un-changing benchmark to baseline against. 
 - I decided to use the same video that fell flat on that previous training. I decided to use that video as my benchmark test set. 
