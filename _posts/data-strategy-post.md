@@ -166,16 +166,28 @@ So I've got my target. **Usecase:** `Detect potholes from overhead view on dirt 
 Now that I know what problem I want to solve, I'll need a metric to tell me when I've solved it.
 
 ## Deciding on a benchmark
-A clear and narrow problem definition helps determining whether or not the model is performant seems obvious: Either it detects the potholes under the stated conditions or it doesnt. 
+Determining whether or not the model is performant seems obvious: Either it detects the potholes under the stated conditions or it doesnt, right? 
 
-But its not that simple for a few reasons. 
+Kinda, but there's a few questions that need answers:
+
+1. **What measure signals success?**
+    - mAP (mean average precision) is the standard metric in object detection
+    - Its a measure of how accurately the model detects objects when compared to the real object boundary ([this blog](https://jonathan-hui.medium.com/map-mean-average-precision-for-object-detection-45c121a31173) gets into some of the math behind _how_ its calculated)
+    - mAP50Ultralytics val() function returns mAP50 and mAP95. To avoid building any funcionThe common measures if the model polygons overlap at least 50
+    - but only on a set of accurately labeled images (knowns)
+3. What threshold is realistic under current constraints?
+    - idk bro i'm just gonna go with 50% on mAP50
 1. **What is a pothole?** 
-    - >pothole | noun | a depression or hollow in a road surface caused by wear or sinking
+    - Definition: _a depression or hollow in a road surface caused by wear or sinking_.
+    - For the sake of this experiment I had to make some convenient assumptions
+        - All puddles are potholes (but not the inverse). 
+        - Not all potholes are circular. They can be uniquely shaped
+        - Generally, all road defects are potholes. Ground defects off road are _not_ potholes.
+    
+    - 
     - how do we know if a depression is a puddle or pothole?
     - what about long potholes/? 
     - ultimately i decided on 
-2. how do you measure successful detection?
-3. What threshold is realistic under current constraints. 
 
 - So we know what problem we want to solve, now we need to define a measure for knowing when we've solved it (or at least proven traction towards a solution)
 - Come up with lots of diverse data is great, but i need to have a clear and un-changing benchmark to baseline against. 
