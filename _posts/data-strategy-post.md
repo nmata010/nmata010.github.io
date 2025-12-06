@@ -155,26 +155,15 @@ Like all things, this seems simple on the surface, but required navigating a lot
 We'll start at the beginning.
 
 ## Defining a clear use case
-Last time I worked on this I was pretty gung ho to hurry up and train a model so overlooked un-arguably the most important part: Defining the problem
+Last time I was so gung ho to train a model that skipped over the most important part: **Defining the problem**
 
-I needed to take a step back from the 'how' and lean into the 'what'. 
+I needed to take a step back from the 'how' and lean into the 'what'. My previous model faceplanted when running inference on overhead footage of a dirt road. That's a pretty narrow failure condition so it felt like a good starting point. 
 
-My previous model faceplanted when trying to run inference on one specific category of image I tested: overhead footage of a dirt road. That's a pretty narrow failure condition and felt like a good starting point. 
+In the real world I would want to validate and 'harden' this problem definition with user reasearch and data, but under my current constraints (low budget, no commercial ambitions), this is sufficient. That said, I don't want to understate the importance of this part. I think its the _most important_ part of achieving success on this type of project (maybe all projects).
 
-In the real world this is the most important part of any product development. Finding a problem worth solving is not trivial and central to product success. Under different constraints (like more budget and a real market) we'd want to spend time validating and 'hardening' this problem definition. 
+So I've got my target. **Usecase:** `Detect potholes from overhead view on dirt roads with little traffic.` 
 
-But under my current constraints (no budget and no commercial ambitions) 
-
-Doing things is the best way to learn (I won't debate that either)
-- Last time i did this i completely overlooked the "problem" part and skipped right to solution
-- that was the direct cause of failure, so i wanted to make sure it didn't happen again
-- this time, i had a clear idea for a problem i wanted to solve
-- "identify potholes in dirt roads as seen from far overhead"
-- Why this?
-    - my first expirement fell apart when testing on overhead dirt roads. 
-    - It was a clear and specific problem to address.
-    - i coudn't find any ready-made datasets, so i could experiment with collecting and preparing data
-    - it was similar enough to what other ppl have done so i could lean on others
+With my problem definition set, the next step is to define a measure of success.
 
 ## Deciding on a benchmark
 - So we know what problem we want to solve, now we need to define a measure for knowing when we've solved it (or at least proven traction towards a solution)
