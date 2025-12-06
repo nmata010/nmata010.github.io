@@ -155,6 +155,17 @@ Like all things, this seems simple on the surface, but required navigating a lot
 We'll start at the beginning.
 
 ## Defining a clear use case
+Last time I worked on this I was pretty gung ho to hurry up and train a model so overlooked un-arguably the most important part: Defining the problem
+
+I needed to take a step back from the 'how' and lean into the 'what'. 
+
+My previous model faceplanted when trying to run inference on one specific category of image I tested: overhead footage of a dirt road. That's a pretty narrow failure condition and felt like a good starting point. 
+
+In the real world this is the most important part of any product development. Finding a problem worth solving is not trivial and central to product success. Under different constraints (like more budget and a real market) we'd want to spend time validating and 'hardening' this problem definition. 
+
+But under my current constraints (no budget and no commercial ambitions) 
+
+Doing things is the best way to learn (I won't debate that either)
 - Last time i did this i completely overlooked the "problem" part and skipped right to solution
 - that was the direct cause of failure, so i wanted to make sure it didn't happen again
 - this time, i had a clear idea for a problem i wanted to solve
