@@ -139,16 +139,16 @@ I think to solve this effectively i need to:
 - **Clear outcomes flow from controlled variables.** Trying a bunch of things is the best way to know what does/doesn't work. But changing one variable at a time is key to drawing a line between input changes and performance improvements.
 
 ## Where do we begin?
-Last month I decided to train a cvis model. It was super easy and fun, but didn't net the best results. There's a [full write up here](/_posts/2025-10-24-training_a_yolo_model.md), but the gist of it is that I didn't really start with the end in mind, and thats how I discovered the importance of data strategy for ML applications. 
+Last month I decided to train a computer vision model. It was super easy and fun, but didn't net the best results. There's a [full write up here](/_posts/2025-10-24-training_a_yolo_model.md), but the gist of it is that I didn't really start with the end in mind, and thats how I discovered the importance of data strategy for ML applications. 
 
-My intention on the heels of that flop was to take on a more thoughtful approach to the notion that _data strategy_ is the difference between a cvis model that works and mine.
+On the heels of that flop my intention was to take on a more thoughtful approach to the notion that _data strategy_ is the difference between a cvis model that works and mine.
 
 So as to not leave any loose threads from my last post (and to have fun things to do over the long thanksgiving weekend) I set out to solve my domain shit problem by:
-- Defining a clear usecase to serve as a 'what' and 'why' anchor for my experimentation.
-- Decide on 'success metric' for this usecase that will provide an objective measurement on performance.
-- Cultivate and prepare relevant training data in support of my usecase.
-- Train some models to check their performance on my usecase.
-- Come to a conclusion on what gets me to (or keeps me from) achieving the success criteria. 
+- Defining a [clear usecase](#defining-a-clear-use-case) to serve as a 'what' and 'why' anchor for my experimentation.
+- Decide on a [success metric](#deciding-on-a-benchmark) for this usecase that will provide an objective measurement on performance.
+- [Cultivate](#data-strategy) and [prepare](#preparing-the-data) relevant training data in support of my usecase.
+- [Train some models](#running-experiments) to check their performance on my usecase.
+- Draw some [conclusions](#so-what-conclusion) on what got me to (or kept me from) achieving the success criteria. 
 
 Like all things, this seems simple on the surface, but required navigating a lot of nuance in domains I'm not that familiar with (see [Dunning-Kruger effect](https://resilienceshield.com/app/uploads/2021/05/Mt-Stupid-1-1.png)).
 
