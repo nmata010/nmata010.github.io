@@ -168,7 +168,7 @@ Now that I know what problem I want to solve, I'll need a metric to tell me when
 ## Deciding on a benchmark
 Determining whether or not the model is performant seems obvious: Either it detects the potholes under the stated conditions or it doesnt, right? 
 
-Kinda... but there's a few questions that need answers:
+Kinda... but there's a couple of questions that need answers:
 
 1. **What measure signals success?**
     - [mAP](https://blog.roboflow.com/mean-average-precision) (mean average precision) is a standard metric in object detection that balances recall (finding all the objects) with precision (avoiding all the non-objects). 
@@ -176,27 +176,20 @@ Kinda... but there's a few questions that need answers:
     - I'll be using [**mAP50**](https://docs.ultralytics.com/guides/yolo-performance-metrics/#class-wise-metrics) as my measure for performance. Its a pretty leinient metric, but still gives clear signal on whether or not the right object is being detected.
 2. **What threshold is sufficient?** 
     - Stated differently: "If mAP50 is the test, what score must the model achieve to prove its ability?"
-    - I'm trying to prove traction towards a solution, not achieve perfection on the first try. I think a `mAP50=50%` sufficiently demonstrates utility while leaving lots of room for improvement. 
-3. **What is a pothole?** 
-    - The metric (mAP50) and threshold (50%) I chose both depend on validating performance on images with potholes already identified. That means I'll need to manually tag some images which begs the question `what's a pothole?` 
-    - Definition: _a depression or hollow in a road surface caused by wear or sinking_.
-    - For the sake of this experiment I made some convenient assumptions:
-        - All _road_ defects are potholes. _Ground_ defects off road **are not** potholes.
-        - All puddles are potholes (but not the inverse). 
-        - Not all potholes are circular. They can be uniquely shaped.
-        
-    
-    - 
-    - how do we know if a depression is a puddle or pothole?
-    - what about long potholes/? 
-    - ultimately i decided on 
+    - I'm trying to prove traction towards a solution, not achieve perfection on the first try. I think a `mAP50=50%` sufficiently demonstrates utility while leaving lots of room for improvement.
 
-- So we know what problem we want to solve, now we need to define a measure for knowing when we've solved it (or at least proven traction towards a solution)
-- Come up with lots of diverse data is great, but i need to have a clear and un-changing benchmark to baseline against. 
-- I decided to use the same video that fell flat on that previous training. I decided to use that video as my benchmark test set. 
-- Doing this would mimic a real world use case where the model has to predict potholes on a set of images its never seen before. 
-- I decided on 50% mAP50 as the POC viability benchmark. If i could achieve 50% on mAP50, i would be satisfied. 
-- I used roboflow to pull frames fromt this video and manually annotated them (~1500 potholes). I marked these as 'test' in my dataset to make sure they don't mix with the training data. This is my 'gold standard' dataset that i'll benchmark against. 
+The metric (mAP50) and threshold (50%) I chose both depend on validating performance on images with real potholes already identified (test data). Running these metrics against the irrelevant test data would yield useless results. 
+
+I'll need to manually tag some images with potholes which begs the question:
+
+**What is a pothole?** 
+- Definition: _a depression or hollow in a road surface caused by wear or sinking_.
+- For the sake of this experiment I made some convenient assumptions:
+    - All _road_ defects are potholes. _Ground_ defects off road **are not** potholes.
+    - All puddles are potholes (but not the inverse). 
+    - Not all potholes are circular. They can be uniquely shaped.
+
+I used roboflow to pull frames from the video that caused my original model to fail and manually annotated ~1500 potholes to become my 'Test' dataset. I'll benchmark all the models I train against this test set to draw a clear conclusion on how well we're adressing the problem. 
 
 ## Data strategy
 OK i've got a clear use case and a clear way of knowing when i've solved it. Time to talk strategy. How am i going to collect, manage, and use relevant training data
