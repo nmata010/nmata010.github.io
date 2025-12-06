@@ -168,21 +168,23 @@ Now that I know what problem I want to solve, I'll need a metric to tell me when
 ## Deciding on a benchmark
 Determining whether or not the model is performant seems obvious: Either it detects the potholes under the stated conditions or it doesnt, right? 
 
-Kinda, but there's a few questions that need answers:
+Kinda... but there's a few questions that need answers:
 
 1. **What measure signals success?**
-    - mAP (mean average precision) is the standard metric in object detection
-    - Its a measure of how accurately the model detects objects when compared to the real object boundary ([this blog](https://jonathan-hui.medium.com/map-mean-average-precision-for-object-detection-45c121a31173) gets into some of the math behind _how_ its calculated)
-    - mAP50Ultralytics val() function returns mAP50 and mAP95. To avoid building any funcionThe common measures if the model polygons overlap at least 50
-    - but only on a set of accurately labeled images (knowns)
-3. What threshold is realistic under current constraints?
-    - idk bro i'm just gonna go with 50% on mAP50
-1. **What is a pothole?** 
+    - [mAP](https://blog.roboflow.com/mean-average-precision) (mean average precision) is a standard metric in object detection that balances recall (finding all the objects) with precision (avoiding all the non-objects). 
+    - Its a measure of how well the model detects objects when compared to the real object boundary ([this blog](https://jonathan-hui.medium.com/map-mean-average-precision-for-object-detection-45c121a31173) gets into some of the math behind _how_ its calculated).
+    - I'll be using [**mAP50**](https://docs.ultralytics.com/guides/yolo-performance-metrics/#class-wise-metrics) as my measure for performance. Its a pretty leinient metric, but still gives clear signal on whether or not the right object is being detected.
+2. **What threshold is sufficient?** 
+    - Stated differently: "If mAP50 is the test, what score must the model achieve to prove its ability?"
+    - I'm trying to prove traction towards a solution, not achieve perfection on the first try. I think a `mAP50=50%` sufficiently demonstrates utility while leaving lots of room for improvement. 
+3. **What is a pothole?** 
+    - The metric (mAP50) and threshold (50%) I chose both depend on validating performance on images with potholes already identified. That means I'll need to manually tag some images which begs the question `what's a pothole?` 
     - Definition: _a depression or hollow in a road surface caused by wear or sinking_.
-    - For the sake of this experiment I had to make some convenient assumptions
+    - For the sake of this experiment I made some convenient assumptions:
+        - All _road_ defects are potholes. _Ground_ defects off road **are not** potholes.
         - All puddles are potholes (but not the inverse). 
-        - Not all potholes are circular. They can be uniquely shaped
-        - Generally, all road defects are potholes. Ground defects off road are _not_ potholes.
+        - Not all potholes are circular. They can be uniquely shaped.
+        
     
     - 
     - how do we know if a depression is a puddle or pothole?
