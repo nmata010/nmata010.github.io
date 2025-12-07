@@ -1,1 +1,13 @@
-theme: jekyll-theme-minimal
+remote_theme: jekyll/minima
+plugins:
+  - jekyll-remote-theme
+
+title: Nick M. Blog
+author: Nick M.
+
+minima:
+  skin: dark
+  social_links:
+    - title: My LinkedIn Profile
+      icon: linkedin
+      url: "https://www.linkedin.com/in/nmatamoros/"
