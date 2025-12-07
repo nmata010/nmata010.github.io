@@ -39,7 +39,7 @@ So I've got my target. **Usecase:** `Detect potholes from overhead view on dirt 
 Now that I know what problem I want to solve, I'll need a metric to tell me when I've solved it.
 
 ## Deciding on a benchmark
-Determining whether or not the model is performant seems obvious: Either it detects the potholes under the stated conditions or it doesnt, right? 
+Determining whether or not the model is performant seems trivial: Either it detects the potholes under the stated conditions or it doesnt, right? 
 
 Kinda... but there's a couple of questions that need answers:
 
@@ -62,9 +62,37 @@ I'll need to manually tag some images with potholes which begs the question:
     - All puddles are potholes (but not the inverse). 
     - Not all potholes are circular. They can be uniquely shaped.
 
-I used roboflow to pull frames from the video that caused my original model to fail and manually annotated ~1500 potholes to become my 'Test' dataset. I'll benchmark all the models I train against this test set to draw a clear conclusion on how well we're adressing the problem. 
+I used [roboflow](https://roboflow.com/) to pull frames from the video that caused my original model to fail and manually annotated ~1500 potholes to become my 'Test' dataset. I'll benchmark all the models I train against this test set to draw a clear conclusion on how well we're adressing the problem. 
+
+Now that I've got a KPI to target we can talk data that'll get us there.
 
 ## Data strategy
+With a clear problem statement the data required is obvious: I need overhead images of dirt roads with potholes. 
+
+Again, this seems simple but there are nuances to manage:
+- Dirt roads look differently at different times of day.
+- The landscape around the roads can be dramatically different.
+- Weather conditions play a role in how the road itself looks (e.g. snow covered)
+- Potholes look differently at different overhead distances and angles. 
+- View of road can be partially obstructed by natural elements, like trees.
+
+I'll need to source training data that adequately represents this variance. One options is to scrape youtube videos for the data but that felt kind of 'scammy'; I wanted to approach this as if I was in a legit commercial setting. 
+
+Initially I expected to find public-license datasets that matched my usecase, but I was met with a-whole-lotta-nothing. I decided the best parth forward would be to source my own training data. 
+
+To source the training data for this experiment I followed the following strategy:
+1. Ethicaly sourced: Ethics in data matters. This is not a commercial pursuit, but I wanted to simulate a commercial environment where IP is a real constraint. I focused on 
+2. Mixed between synthetic and real so I focused on royalty-free stock footage from [Pexels](https://www.pexels.com/). They have a great semantic search and I was able to find relevant examples quickly.
+3. curated so i can make due with limited images
+4. 
+
+Ethics in training data is a massivley important topic. Data used for training modles shoudl generally and i wanted to make sure the data i was using to train my models was sourced ethically. Generally my approach was to 
+
+I decided to treat this as I would in the rea
+
+Now that I have clarity on what problem to solve (and how to measure it) the data I need to solve it becomes obvious. 
+
+What I wanted to convey is how important it is to pick the right data.
 OK i've got a clear use case and a clear way of knowing when i've solved it. Time to talk strategy. How am i going to collect, manage, and use relevant training data
 
 - What data is relevant
