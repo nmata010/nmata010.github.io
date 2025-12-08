@@ -85,30 +85,9 @@ For this experiment I followed the following constraints:
 2. **Hybrid data:** I wanted to mix real and synthetic data. I used [Pexels](https://www.pexels.com/) for royalty-free stock footage and [Veo 3](https://deepmind.google/models/veo/) for some synthetic training examples.
 3. **Highly curated:** I have limited bandwidth so I'm prioritizing quality>quantity. I cherry picked material that represented the nuance sufficiently, but didn't go beyond that.
 
+This approach got me to a final count of ~550 images covering the full spectrum of variance mentioned earlier. This is a good start, but these are just raw images. I still need to this collection into a labeled dataset. 
+
 ---
-Ethics in training data is a massivley important topic. Data used for training modles shoudl generally and i wanted to make sure the data i was using to train my models was sourced ethically. Generally my approach was to 
-
-I decided to treat this as I would in the rea
-
-Now that I have clarity on what problem to solve (and how to measure it) the data I need to solve it becomes obvious. 
-
-What I wanted to convey is how important it is to pick the right data.
-OK i've got a clear use case and a clear way of knowing when i've solved it. Time to talk strategy. How am i going to collect, manage, and use relevant training data
-
-- What data is relevant
-    - Ok so i know what problem i want to solve, and this sort of obviates the data i need: Overhead images of dirt roads with potholes. 
-    - Seems simple enough, but consider that dirt roads are often surrounded by different nature landscapes, which look differently depending on the season and weather. Sunlight also plays a factor. 
-    - For this set of experiments i decided i'd need all of the above.
-- How do we source it (ethically)
-    - no shortage of dirt road youtube videos to scrape, but that's kind of scammy
-    - Decided to use pexels.com which has royalty free stock imagry. Bonus points for a semantic search that works pretty well 
-    - Also figured it might be interesting to experiment with synthetic data so i put together a short clip using Veo3
-- How much data do we need? 
-    - I don't know, but i wanted to land somewhere 'robust yet achievable'. I arbitrarily chose 500 images as a target and  decided to pull 1-2 frames per second from each video.
-    - Wanted to make sure i had diverse weather, seasons, backgrounds, and overhead perspectives. 
-    - I selected 5 videos totaling 131 seconds. Using 1-2 frames per second got me to around 250 images. After transformations and augmentation i landed at 558 images across training, validation, and test. (available here//link to kaggle)
-- How does it map to our desired outcome
-    - I'm not sure what to write here. 
 
 ## Preparing the data
 - Since i didn't find any compelling 'overhead, dirt-road, potholes in different environments and different weather" datasets, i decided i would produce my own. 
