@@ -76,16 +76,16 @@ Again, this seems simple but there are nuances to manage:
 - Potholes look differently at different overhead distances and angles. 
 - View of road can be partially obstructed by natural elements, like trees.
 
-I'll need to source training data that adequately represents this variance. One options is to scrape youtube videos for the data but that felt kind of 'scammy'; I wanted to approach this as if I was in a legit commercial setting. 
+I'll need to source training data that adequately represents this variance.
 
-Initially I expected to find public-license datasets that matched my usecase, but I was met with a-whole-lotta-nothing. I decided the best parth forward would be to source my own training data. 
+I expected to find public-license datasets that matched my usecase, but I was met with a-whole-lotta-nothing. I decided the best parth forward would be to source my own training data. 
 
-To source the training data for this experiment I followed the following strategy:
-1. Ethicaly sourced: Ethics in data matters. This is not a commercial pursuit, but I wanted to simulate a commercial environment where IP is a real constraint. I focused on 
-2. Mixed between synthetic and real so I focused on royalty-free stock footage from [Pexels](https://www.pexels.com/). They have a great semantic search and I was able to find relevant examples quickly.
-3. curated so i can make due with limited images
-4. 
+For this experiment I followed the following constraints:
+1. **Ethicaly sourced:** Ethics in data matters. I wanted to make sure the data I curated was ethically sourced. This is not a commercial pursuit, so I leaned on fair-use.
+2. **Hybrid data:** I wanted to mix real and synthetic data. I used [Pexels](https://www.pexels.com/) for royalty-free stock footage and [Veo 3](https://deepmind.google/models/veo/) for some synthetic training examples.
+3. **Highly curated:** I have limited bandwidth so I'm prioritizing quality>quantity. I cherry picked material that represented the nuance sufficiently, but didn't go beyond that.
 
+---
 Ethics in training data is a massivley important topic. Data used for training modles shoudl generally and i wanted to make sure the data i was using to train my models was sourced ethically. Generally my approach was to 
 
 I decided to treat this as I would in the rea
