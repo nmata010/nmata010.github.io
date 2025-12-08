@@ -90,7 +90,9 @@ This approach got me to a final count of ~550 images covering the full spectrum 
 ---
 
 ## Preparing the data
-- Since i didn't find any compelling 'overhead, dirt-road, potholes in different environments and different weather" datasets, i decided i would produce my own. 
+Turning these 550 images into a real dataset that can be used for fine tuning is pretty straight forward. I need to  
+
+
 - the main take away is that data prep is simple, not easy (are all road defecs potholes? is a puddle a pothole? how do you decide?)
 - In researching tools for annotation i came across roboflow and used that. It let me annotate pretty easily, along with preparing the dataset for publishing. 
 - i also cultivated a 'gold standard' dataset. This also involved manually labeling ~1500 potholes. 
