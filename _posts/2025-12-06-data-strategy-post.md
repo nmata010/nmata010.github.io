@@ -146,6 +146,12 @@ Alright, I have a problem to solve, a KPI to target, and a dataset that I'm hopi
 | 5 | Roboflow_Aerial_350e | hyper-parameter tuning = better perf | Aerial view potholes | 350 | **57%** | -- | **Hypothesis Supported** 
 | 6 | meta/SAM3 | SOTA model will achieve 50% benchmark with no fine-tuning on domain data | -- | --| xx% | Falls far short on average (though does a very well on a few of the individual frames). | **Hypothesis Rejected** 
 
+---
+| 1 | 2 | 3  | 4 | 5 | 6 7 | 8 |  
+| -- | -- | -- | -- | -- | -- | -- | 
+
+---
+
 ## So what? (conclusion)
 - yea the data made the biggest differene
 - long training runs also made a significant difference
