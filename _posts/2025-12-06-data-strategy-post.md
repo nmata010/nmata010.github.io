@@ -291,15 +291,15 @@ I think to solve this effectively i need to:
     - Models i need
         - new20epoch_newDS # 20e fresh model using new DS
 
-| Model | mAP50 | Inference time | Hypothesis | Condition | Result
-| --    | --    | --      | --    | --  | --  |
-| 1192025_1Epoch/best.pt | 0.0045 | 26.8ms | Baseline | Control Dataset; 1epoch | Complete fail
-| 11192025_20Epoch/best.pt | 0.00421 | 10.6ms | Extending training duration will make it better | 20E on control dataset | Much faster, but complete fail
-| 11212025_1Epoch_newDS/best.pt | 0.102 | 11.9ms | Domain specific data will improve performance | Aerial dataset; 1 epoch | 20x improvement vs baseline
-| new20epoch_newDS/best.pt | 0.429 | 12.4ms | More training is more better | domain specific data set; 20epochs | 4.2x improvement on 1e model; 95x improvement on baseline
-| 12022025_350Epoch_newDS/best.pt | 0.504 | 33.4ms | Way more training is way more better | domain specific data set; 350epochs | 4.9x improvement on 1e model; 112x improvement on baseline
-| roboflow | 0.57 | -- | training optimization will yield better results | domain specific data set; 350epochs; trained on roboflow (instead of colab) | 5.6x improvement on 1e model; 126x improvement on baseline
-| meta/SAM3 | -- | -- | -- | SOTA |
+| Model | mAP50 | Inference time | Hypothesis | Condition | Result | test
+| --    | --    | --      | --    | --  | --  | -- |
+| 1192025_1Epoch/best.pt | 0.0045 | 26.8ms | Baseline | Control Dataset; 1epoch | Complete fail |
+| 11192025_20Epoch/best.pt | 0.00421 | 10.6ms | Extending training duration will make it better | 20E on control dataset | Much faster, but complete fail |
+| 11212025_1Epoch_newDS/best.pt | 0.102 | 11.9ms | Domain specific data will improve performance | Aerial dataset; 1 epoch | 20x improvement vs baseline |
+| new20epoch_newDS/best.pt | 0.429 | 12.4ms | More training is more better | domain specific data set; 20epochs | 4.2x improvement on 1e model; 95x improvement on baseline | 
+| 12022025_350Epoch_newDS/best.pt | 0.504 | 33.4ms | Way more training is way more better | domain specific data set; 350epochs | 4.9x improvement on 1e model; 112x improvement on baseline |
+| roboflow | 0.57 | -- | training optimization will yield better results | domain specific data set; 350epochs; trained on roboflow (instead of colab) | 5.6x improvement on 1e model; 126x improvement on baseline |
+| meta/SAM3 | -- | -- | -- | SOTA | -- |
 
  - New model 12022025_350Epoch_newDS/best.pt took ~2h 
 - Testing SAM3
