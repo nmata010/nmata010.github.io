@@ -148,10 +148,19 @@ Alright, I have a problem to solve, a KPI to target, and a dataset that I'm hopi
 | 5 | Roboflow_Aerial_350e | hyper-parameter tuning = better perf | Aerial view potholes | 350 | **57%** | -- | **Hypothesis Supported** 
 | 6 | meta/SAM3 | SOTA model will achieve 50% benchmark with no fine-tuning on domain data | -- | --| xx% | Falls far short on average (though does a very well on a few of the individual frames). | **Hypothesis Rejected** 
 
+# test table
 
-| # | Model | Hypothesis  | Dataset | Epochs | Result (mAP50) | Observation | Conclusion 
+
+| # | Hypothesis | Model  | Dataset | Epochs | Result (mAP50) | Observation | Conclusion 
 | -- | -- | -- | -- | -- | -- | -- | -- 
-| a | b | c | d | e | f | g | h
+| 0 | -- | Control_1e | Street-level potholes | 1 | **0.45%** | Model fails on aerial images | **Baseline** 
+| 1 | More training on same data will correct domain shift | Control_20e | Street-level potholes | 20 | **0.42%** | Model fails on aerial images. Underperforms baseline | **Hypothesis Rejected** 
+| 2 | Training on images more releavnt to the test case will correct domain shift | Aerial_1e | Aerial view potholes | 1 | **10.2%** | Significantly outperforms basilne (2.2 OOM) but falls well short of benchmark (50%) |**Hypothesis Supported** 
+| 3 | More training on same data will improve model performance | Aerial_20e | Aerial view potholes | 20 | **42.9%** | Big performance improvement (4.2x). Tracking towards benchmark but still falls short. Training time relates to performance non-linearly | **Hypothesis Supported** 
+| 4 | A long training run will yield better performance but a reduced rate. | Aerial_350e | Aerial view potholes | 350 | **50.4%** | Achieves benchmark! Some improvement (17%) | **Hypothesis Supported** 
+| 5 | hyper-parameter tuning = better perf | Roboflow_Aerial_350e | Aerial view potholes | 350 | **57%** | -- | **Hypothesis Supported** 
+| 6 | SOTA model will achieve 50% benchmark with no fine-tuning on domain data | meta/SAM3 | -- | --| xx% | Falls far short on average (though does a very well on a few of the individual frames). | **Hypothesis Rejected** 
+
 
 
 
