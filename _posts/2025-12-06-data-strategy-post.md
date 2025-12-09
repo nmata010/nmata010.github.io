@@ -90,20 +90,19 @@ I decided on 1 img per second of video. This approach got me to a final count of
 ---
 
 ## Preparing the data
-Turning these 550 images into a real dataset that can be used for fine tuning was a slog. 
+Turning these 550 images into a real dataset that can be used for fine tuning was a grind. 
 
 Roboflow made this as painless as possible, but manually selecting _each individual pothole_ was tedious to say the least. I tried using a SOTA model (SAM3) to do the labeling for me, but found that the model struggled to identify 'pothole' from these images (maybe my model will fill a real gap in the pothole identifying marketplace).
 
 Armed with my 'pothole' definition from earlier I got to tagging and bucketing images between train/valid. 
 
-Once complete, I uploaded the dataset to [Kaggle](https://www.kaggle.com/datasets/nmata010/overhead-potholes-test-set-v1) so I could reference the URL in code and avoid updating references 
-- the main take away is that data prep is simple, not easy (are all road defecs potholes? is a puddle a pothole? how do you decide?)
-- In researching tools for annotation i came across roboflow and used that. It let me annotate pretty easily, along with preparing the dataset for publishing. 
-- i also cultivated a 'gold standard' dataset. This also involved manually labeling ~1500 potholes. 
-- BTW, i tried using sam3 to do some labling for me, but it was hit or miss. More on that later. 
-- Finally, with all the manual annotations done, i exported from roboflow, uploaded to kaggle and i'm ready to start running experiments
+Once complete, I uploaded the dataset to [Kaggle](https://www.kaggle.com/datasets/nmata010/overhead-potholes-test-set-v1) so that I could pass it into my colab notebook with the scaffolding I already have in place (and I guess there's a chance others will follow along). 
+
+We're ready to start training and tweaking models!
 
 ## Running experiments
+Alright, I have a problem to solve, a KPI to target, and a dataset that I'm hoping will get me there. 
+
 - Ok so i've got a dataset, a benchmark, and a list of experiments. I'm ready to start training models and checking performace.
 - I made some tweaks to the colab notebook to add support for model validation. That was a fun sidequest that resulted in my first OSS contribution. 
 ### Control group: 
