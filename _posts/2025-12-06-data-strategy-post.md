@@ -85,14 +85,18 @@ For this experiment I followed the following constraints:
 2. **Hybrid data:** I wanted to mix real and synthetic data. I used [Pexels](https://www.pexels.com/) for royalty-free stock footage and [Veo 3](https://deepmind.google/models/veo/) for some synthetic training examples.
 3. **Highly curated:** I have limited bandwidth so I'm prioritizing quality>quantity. I cherry picked material that represented the nuance sufficiently, but didn't go beyond that.
 
-This approach got me to a final count of ~550 images covering the full spectrum of variance mentioned earlier. This is a good start, but these are just raw images. I still need to this collection into a labeled dataset. 
+I decided on 1 img per second of video. This approach got me to a final count of ~550 images covering the full spectrum of variance mentioned earlier. This is a good start, but these are just raw images. I still need to this collection into a labeled dataset. 
 
 ---
 
 ## Preparing the data
-Turning these 550 images into a real dataset that can be used for fine tuning is pretty straight forward. I need to  
+Turning these 550 images into a real dataset that can be used for fine tuning was a slog. 
 
+Roboflow made this as painless as possible, but manually selecting _each individual pothole_ was tedious to say the least. I tried using a SOTA model (SAM3) to do the labeling for me, but found that the model struggled to identify 'pothole' from these images (maybe my model will fill a real gap in the pothole identifying marketplace).
 
+Armed with my 'pothole' definition from earlier I got to tagging and bucketing images between train/valid. 
+
+Once complete, I uploaded the dataset to [Kaggle](https://www.kaggle.com/datasets/nmata010/overhead-potholes-test-set-v1) so I could reference the URL in code and avoid updating references 
 - the main take away is that data prep is simple, not easy (are all road defecs potholes? is a puddle a pothole? how do you decide?)
 - In researching tools for annotation i came across roboflow and used that. It let me annotate pretty easily, along with preparing the dataset for publishing. 
 - i also cultivated a 'gold standard' dataset. This also involved manually labeling ~1500 potholes. 
