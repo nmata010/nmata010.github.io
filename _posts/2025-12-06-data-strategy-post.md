@@ -101,7 +101,8 @@ Once complete, I uploaded the dataset to [Kaggle](https://www.kaggle.com/dataset
 We're ready to start training and tweaking models!
 
 ## Running experiments
-Alright, I have a problem to solve, a KPI to target, and a dataset that I'm hoping will get me there. 
+Alright, I have a problem to solve, a KPI to target, and a dataset that I'm hoping will get me there. Lets get into it!
+
 
 - Ok so i've got a dataset, a benchmark, and a list of experiments. I'm ready to start training models and checking performace.
 - I made some tweaks to the colab notebook to add support for model validation. That was a fun sidequest that resulted in my first OSS contribution. 
