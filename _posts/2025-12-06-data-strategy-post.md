@@ -136,6 +136,8 @@ Alright, I have a problem to solve, a KPI to target, and a dataset that I'm hopi
 - conclusion is that getting to production grade (mAP50=95%) likely requires more robust data _and_ hyper parameter tuning. 
 
 ### Summary Table
+
+
 | # | Model | Hypothesis  | Dataset | Epochs | Result (mAP50) | Observation | Conclusion 
 | -- | -- | -- | -- | -- | -- | -- | -- 
 | 0 | Control_1e | -- | Street-level potholes | 1 | **0.45%** | Model fails on aerial images | **Baseline** 
