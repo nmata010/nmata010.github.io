@@ -96,16 +96,28 @@ Roboflow made this as painless as possible, but manually selecting _each individ
 
 Armed with my 'pothole' definition from earlier I got to tagging and bucketing images between train/valid. 
 
-Once complete, I uploaded the dataset to [Kaggle](https://www.kaggle.com/datasets/nmata010/overhead-potholes-test-set-v1) so that I could pass it into my colab notebook with the scaffolding I already have in place (and I guess there's a chance others will follow along). 
+Once complete, I uploaded the [dataset to Kaggle](https://www.kaggle.com/datasets/nmata010/overhead-potholes-test-set-v1) so that I could pass it into my colab notebook with the scaffolding I already have in place (and so others can follow along). 
 
 We're ready to start training and tweaking models!
 
 ## Running experiments
-Alright, I have a problem to solve, a KPI to target, and a dataset that I'm hoping will get me there. Lets get into it!
+Alright! I have a problem to solve, a KPI to target, and a dataset that I'm hoping will get me there. Lets get into it!
 
+This is the loop I generally followed. It didn't always go flow linearly, but for the most part I changed 1 variable at a time to get clear signal on what was affecting the mAP results:
+1. Make an assumption.
+2. Change a training variable to test that assumption.
+3. Train a model with those variables.
+4. Benchmark it on new dataset & record outcome.
+5. Come to a conclusion & start over.
 
-- Ok so i've got a dataset, a benchmark, and a list of experiments. I'm ready to start training models and checking performace.
-- I made some tweaks to the colab notebook to add support for model validation. That was a fun sidequest that resulted in my first OSS contribution. 
+To be able to get 1:1 comparisons across different models I made some tweaks to the [OS colab notebook](https://github.com/mfranzon/yolo-training-template/blob/main/notebooks/yolo_template.ipynb) I'm using. These changes let me add validation without changing the existing training/inference scripts: 
+- Pick which model to run inference with & where to save results
+- Download new dataset and select `test` path
+- Run validation on the test images & store results
+- _**note:** thanks to @ultralytics for [this write up](https://docs.ultralytics.com/modes/val/#example-validation-with-arguments) which helped a lot_
+
+(I'm about to get into the deets, but you can skip to the [summary table](#summary-table) if you're impatient)
+
 ### Control group: 
 - first up was establishing a baseline using a 'control group' of models. 
 - I want use the models i trained in my previous experiments to establish a baseline for how they perform on my use-case. 
@@ -141,26 +153,12 @@ Alright, I have a problem to solve, a KPI to target, and a dataset that I'm hopi
 | # | Model | Hypothesis  | Dataset | Epochs | Result (mAP50) | Observation | Conclusion 
 | -- | -- | -- | -- | -- | -- | -- | -- 
 | 0 | Control_1e | -- | Street-level potholes | 1 | **0.45%** | Model fails on aerial images | **Baseline** 
-| 1 | Control_20e | More training on same data will correct domain shift | Street-level potholes | 20 | **0.42%** | Model fails on aerial images. Underperforms baseline | **Hypothesis Rejected** 
-| 2 | Aerial_1e | Training on images more releavnt to the test case will correct domain shift | Aerial view potholes | 1 | **10.2%** | Significantly outperforms basilne (2.2 OOM) but falls well short of benchmark (50%) |**Hypothesis Supported** 
-| 3 | Aerial_20e | More training on same data will improve model performance | Aerial view potholes | 20 | **42.9%** | Big performance improvement (4.2x). Tracking towards benchmark but still falls short. Training time relates to performance non-linearly | **Hypothesis Supported** 
-| 4 | Aerial_350e | A long training run will yield better performance but a reduced rate. | Aerial view potholes | 350 | **50.4%** | Achieves benchmark! Some improvement (17%) | **Hypothesis Supported** 
-| 5 | Roboflow_Aerial_350e | hyper-parameter tuning = better perf | Aerial view potholes | 350 | **57%** | -- | **Hypothesis Supported** 
-| 6 | meta/SAM3 | SOTA model will achieve 50% benchmark with no fine-tuning on domain data | -- | --| xx% | Falls far short on average (though does a very well on a few of the individual frames). | **Hypothesis Rejected** 
-
-# test table
-
-
-| # | Hypothesis | Model  | Dataset | Epochs | Result (mAP50) | Observation | Conclusion 
-| -- | -- | -- | -- | -- | -- | -- | -- 
-| 0 | -- | Control_1e | Street-level potholes | 1 | **0.45%** | Model fails on aerial images | **Baseline** 
-| 1 | More training on same data will correct domain shift | Control_20e | Street-level potholes | 20 | **0.42%** | Model fails on aerial images. Underperforms baseline | **Hypothesis Rejected** 
-| 2 | Training on images more releavnt to the test case will correct domain shift | Aerial_1e | Aerial view potholes | 1 | **10.2%** | Significantly outperforms basilne (2.2 OOM) but falls well short of benchmark (50%) |**Hypothesis Supported** 
-| 3 | More training on same data will improve model performance | Aerial_20e | Aerial view potholes | 20 | **42.9%** | Big performance improvement (4.2x). Tracking towards benchmark but still falls short. Training time relates to performance non-linearly | **Hypothesis Supported** 
-| 4 | A long training run will yield better performance but a reduced rate. | Aerial_350e | Aerial view potholes | 350 | **50.4%** | Achieves benchmark! Some improvement (17%) | **Hypothesis Supported** 
-| 5 | hyper-parameter tuning = better perf | Roboflow_Aerial_350e | Aerial view potholes | 350 | **57%** | -- | **Hypothesis Supported** 
-| 6 | SOTA model will achieve 50% benchmark with no fine-tuning on domain data | meta/SAM3 | -- | --| xx% | Falls far short on average (though does a very well on a few of the individual frames). | **Hypothesis Rejected** 
-
+| 1 | Control_20e | More training on same data will correct domain shift | Street-level potholes | 20 | **0.42%** | Model fails on aerial images. Underperforms baseline | **Rejected** 
+| 2 | Aerial_1e | Training on images more releavnt to the test case will correct domain shift | Aerial view potholes | 1 | **10.2%** | Significantly outperforms basilne (2.2 OOM) but falls well short of benchmark (50%) |**Supported** 
+| 3 | Aerial_20e | More training on same data will improve model performance | Aerial view potholes | 20 | **42.9%** | Big performance improvement (4.2x). Tracking towards benchmark but still falls short. Training time relates to performance non-linearly | **Supported** 
+| 4 | Aerial_350e | A long training run will yield better performance but a reduced rate. | Aerial view potholes | 350 | **50.4%** | Achieves benchmark! Some improvement (17%) | **Supported** 
+| 5 | Roboflow_Aerial_350e | hyper-parameter tuning = better perf | Aerial view potholes | 350 | **57%** | -- | **Supported** 
+| 6 | meta/SAM3 | SOTA model will achieve 50% benchmark with no fine-tuning on domain data | -- | --| xx% | Falls far short on average (though does a very well on a few of the individual frames). | **Rejected** 
 
 
 
