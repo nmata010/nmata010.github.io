@@ -135,6 +135,7 @@ This effectively establishes a floor for how bad a model can perform. Any notabl
 ### Aerial_1e
 My assumption is that the control models' performance (or lack of) is the result of domain shift. I swapped out the training data and ran a short training on the new dataset. 
 - **Assumption:** Control models suffer from domain shift. Training on relevant data should net significant improvement. 
+- **Variable:** New aerial pothole training data
 - **Results:**
 
 | Model | mAP50 |
@@ -148,7 +149,8 @@ This is clear signal that relevant data matters. In my opinion, this _confirms_ 
 ### Aerial_20e
 Domain shift is confirmed. My model Aerial_1e model is showing signs of life (and an ability to detect _some_ potholes). I think the next step is to just crank up the training time and see where that gets us.
 
- **Assumption:** Previous training seems to confirm that we have the right data. Extending the training should specialize the model further and improve performance. 
+- **Assumption:** Previous training seems to confirm that we have the right data. Extending the training should specialize the model further and improve performance. 
+- **Variable:** 20 Epochs
 - **Results:**
 
 | Model | mAP50 |
@@ -160,15 +162,20 @@ Domain shift is confirmed. My model Aerial_1e model is showing signs of life (an
 This model performs pretty and comes very close to the threshold metric, but still comes just shy of it. I also note that for 20x the training the mAP50 improved by 4x, so there's some diminishing returns on training time. 
 
 ### Aerial_350e
+We know we're training on the right data but still falling short of the 50% target. Earlier I noted that the relationship between training time and mAP were non-linear but I don't think we're at the upper bound yet. We're on to something that works so lets find the limit.
 
+- **Assumption:** There's diminishing returns on training time so I'll have to extend the training by a lot to get all I can from the model.
+- **Variable:** 350 Epochs
+- **Results:**
 
+| Model | mAP50 |
+| -- | -- |
+| [Aerial_350e](https://huggingface.co/nmata010/aerial-pothole-detection-12022025_350Epoch_newDS) | 50.4%
 
-- https://huggingface.co/nmata010/aerial-pothole-detection-12022025_350Epoch_newDS
-- trained on aerial dataset for 350epochs
-- hypothesis is that since performance gains are non-linear, we should expect the improvements to trail off. Training for will achieve slight improvements
-- observation is that we do get a milder but still very significant improvement and achieve `mAP50=50.4%`. This took around 2h to train and i struggled with colab limits. This maybe near the upper bound of the training i can do on colab for free. 
-- conclusion is that the performance improvements indeed trail off but not before we reached our benchmark of mAP50=50%. This confirms that we can achieve a POC grade performance with a relatively small training set. How can we squeeze more out of the same data?
-- here we start to see diminishing returns, but still notable improvements 
+- **Conclusion:** WOW! It worked.. After a 2h training and battling Colab limits we passed the target benchmark by a hair. This was a 17% improvement against Aerial_20e which also confirms the dimishing returns concept. 
+
+I'm blown away that I was able to hit the 50% mark. Its far from 'production grade' This is a legit proof of concept model for its very specific intended purpose!
+
 ### Roboflow_Aerial_350e
 - trained on aerial dataset for 350epochs; roboflow does hyperparameter tuning in the background. 
 - hypothesis is that we'll see a very small improvement by leveraging hyper parameter tuning
