@@ -128,16 +128,20 @@ First up I had to establish a baseline. I started with the models from the previ
 | [Control_1e](https://huggingface.co/nmata010/street-level-pothole-detection-11192025_1epoch) | 0.45%
 | [Control_20e](https://huggingface.co/nmata010/street-level-pothole-detection-11192025_20epoch) | 0.42%
 
-- **Conclusion:** These two models were trained on the original ground-level dataset. They perform as poorly as I expected them to, but any notable improvement to these scores is worth exploring. 
+- **Conclusion:** These two models were trained on the original ground-level dataset. They perform as poorly as I expected them to.
+
+This effectively establishes a floor for how bad a model can perform. Any notable improvement to these scores is worth exploring. 
 
 ### Aerial_1e
-My working assumption at this stage is that the poor performance from the control models is the result of domain shift. The best way to test that is to train a new model with my new aerial dataset and compare. 
+I think the My working assumption at this stage is that the poor performance from the control models is the result of domain shift. The best way to test that is to train a new model with my new aerial dataset and compare. 
 
 So I got my new dataset URL, plopped it into my notebook and trained a 1 epoch model on the new aerial dataset. 
 
 | Model | mAP50 |
 | -- | -- |
 | [Aerial_1e](https://huggingface.co/nmata010/aerial-pothole-detection-11212025_1Epoch_newDS) | 10.2%
+
+
 ---
 To test if the problem really was the data, I swapped datasets and re-trained a model. I kept trained for 1epochs to keep the training . out the thousands of street-level images for my modest 558 aerial images. I kept the training time short (1 epoch) to isolate the impact of the data itself.
 
