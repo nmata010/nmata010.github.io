@@ -177,6 +177,22 @@ We know we're training on the right data but still falling short of the 50% targ
 I'm blown away that I was able to hit the 50% mark. Its far from 'production grade' This is a legit proof of concept model for its very specific intended purpose!
 
 ### Roboflow_Aerial_350e
+intro
+
+- **Assumption:** can get more for the same inputs on a production quality training harness (instead of the open source notebook)
+- **Variable:** Hyper-parameter tuning with Roboflow
+- **Results:**
+
+| Model | mAP50 |
+| -- | -- |
+| [Aerial_350e](www.roboflow.com) | 57%
+
+- **Conclusion:** this shit makes a diff
+
+somethign about getting to production
+
+---
+
 - trained on aerial dataset for 350epochs; roboflow does hyperparameter tuning in the background. 
 - hypothesis is that we'll see a very small improvement by leveraging hyper parameter tuning
 - observation is that we see a small but meaningful improvement of 13% by using hyper parameter tuning.
