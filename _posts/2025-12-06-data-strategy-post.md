@@ -134,37 +134,17 @@ This effectively establishes a floor for how bad a model can perform. Any notabl
 
 ### Aerial_1e
 My assumption is that the control models' performance (or lack of) is the result of domain shift. I swapped out the training data and ran a short training on the new dataset. 
-- **Hypothesis:** 
+- **Assumption:** Control models suffer from domain shift. Training on relevant data should net significant improvement. 
 - **Results:**
 
 | Model | mAP50 |
 | -- | -- |
 | [Aerial_1e](https://huggingface.co/nmata010/aerial-pothole-detection-11212025_1Epoch_newDS) | 10.2%
 
-- **Conclusion:** I wanted to assess if just swapping the data was enough to correct theEarlier I created a new training dataset to address this. Training a new model on this new dataset should give me some signal if i'm heading in the right direction or not. 
+- **Conclusion:** This is a major improvement from baseline, though it comes far short of the 50% threshold. And we were able to achieve this with a relatively small dataset. 
 
-So I got my new dataset URL, plopped it into my notebook and trained a 1 epoch model on the new aerial dataset. 
+This is clear signal that relevant data matters. In my opinion, this _confirms_ domain-shift as the key failure of the control models.
 
-
-
-
----
-To test if the problem really was the data, I swapped datasets and re-trained a model. I kept trained for 1epochs to keep the training . out the thousands of street-level images for my modest 558 aerial images. I kept the training time short (1 epoch) to isolate the impact of the data itself.
-
-Hypothesis: If the previous failure was due to domain shift, then training on relevant data (even for a short time) should yield immediate performance gains.
-
-Result: The model hit an mAP50 of 10.2%.
-
-Conclusion: While 10% isn't a "passing grade," context is key here. The control group was stuck at 0.45%. By simply changing the input data—without touching the architecture or increasing training time—we saw a ~22x improvement in performance.
-
-This confirms that the new dataset is valid. The model is finally "seeing" the potholes; now it just needs more time to learn them.
-
----
-
-- trained on aerial dataset for 1epoch
-- hypothesis is that new dataset will result in better mAP50 because the training data is more relevant to the usecase. 
-- Observation is that we get a jump in performance with `mAP50=10.2%`
-- Conclusion is that we're on to something. I think this confirms domain shift as the problem of the previous models. Its also giving good signal that we've got the right training data, but still falls far short of the benchmark of 50% we're trying to hit. 
 ### Aerial_20e
 - https://huggingface.co/nmata010/aerial-pothole-detection-11252025_20Epoch_newDS
 - trained on aerial dataset for 20epoch
