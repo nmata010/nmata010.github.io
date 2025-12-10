@@ -146,13 +146,23 @@ My assumption is that the control models' performance (or lack of) is the result
 This is clear signal that relevant data matters. In my opinion, this _confirms_ domain-shift as the key failure of the control models.
 
 ### Aerial_20e
-- https://huggingface.co/nmata010/aerial-pothole-detection-11252025_20Epoch_newDS
-- trained on aerial dataset for 20epoch
-- hypothesis is that training for longer will result in significantly improved mAP50
-- observation is that we do get a jump in performance with `mAP50=42.9%`
-- conclusion is that training for longer on the same data set does improve performance significantly. We clearly have the right data and are heading in the right directioin, but again fall short of the 50% benchmark. The performance gains are non-linear, training for 20x longer only yielded 4x improvement
-- here we see major improvements
+Domain shift is confirmed. My model Aerial_1e model is showing signs of life (and an ability to detect _some_ potholes). I think the next step is to just crank up the training time and see where that gets us.
+
+ **Assumption:** Previous training seems to confirm that we have the right data. Extending the training should specialize the model further and improve performance. 
+- **Results:**
+
+| Model | mAP50 |
+| -- | -- |
+| [Aerial_20e](https://huggingface.co/nmata010/aerial-pothole-detection-11252025_20Epoch_newDS) | 42.9%
+
+- **Conclusion:** Nice! Another major improvement with a relatively short training run. IMO this proves that data strategy is the difference maker. 
+
+This model performs pretty and comes very close to the threshold metric, but still comes just shy of it. I also note that for 20x the training the mAP50 improved by 4x, so there's some diminishing returns on training time. 
+
 ### Aerial_350e
+
+
+
 - https://huggingface.co/nmata010/aerial-pothole-detection-12022025_350Epoch_newDS
 - trained on aerial dataset for 350epochs
 - hypothesis is that since performance gains are non-linear, we should expect the improvements to trail off. Training for will achieve slight improvements
