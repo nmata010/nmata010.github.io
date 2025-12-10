@@ -133,13 +133,19 @@ First up I had to establish a baseline. I started with the models from the previ
 This effectively establishes a floor for how bad a model can perform. Any notable improvement to these scores is worth exploring. 
 
 ### Aerial_1e
-I think the My working assumption at this stage is that the poor performance from the control models is the result of domain shift. The best way to test that is to train a new model with my new aerial dataset and compare. 
-
-So I got my new dataset URL, plopped it into my notebook and trained a 1 epoch model on the new aerial dataset. 
+My assumption is that the control models' performance (or lack of) is the result of domain shift. I swapped out the training data and ran a short training on the new dataset. 
+- **Hypothesis:** 
+- **Results:**
 
 | Model | mAP50 |
 | -- | -- |
 | [Aerial_1e](https://huggingface.co/nmata010/aerial-pothole-detection-11212025_1Epoch_newDS) | 10.2%
+
+- **Conclusion:** I wanted to assess if just swapping the data was enough to correct theEarlier I created a new training dataset to address this. Training a new model on this new dataset should give me some signal if i'm heading in the right direction or not. 
+
+So I got my new dataset URL, plopped it into my notebook and trained a 1 epoch model on the new aerial dataset. 
+
+
 
 
 ---
