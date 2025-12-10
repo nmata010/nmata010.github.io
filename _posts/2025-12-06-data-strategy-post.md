@@ -110,38 +110,67 @@ This is the loop I generally followed. It didn't always go flow linearly, but fo
 4. Benchmark it on new dataset & record outcome.
 5. Come to a conclusion & start over.
 
-To be able to get 1:1 comparisons across different models I made some tweaks to the [OS colab notebook](https://github.com/mfranzon/yolo-training-template/blob/main/notebooks/yolo_template.ipynb) I'm using. These changes let me add validation without changing the existing training/inference scripts: 
-- Pick which model to run inference with & where to save results
+To get 1:1 comparisons across different models I made some tweaks to the [open-source colab notebook](https://github.com/mfranzon/yolo-training-template/blob/main/notebooks/yolo_template.ipynb) I'm using. These changes let me add validation without changing the existing training/inference scripts: 
+- Pick which model to validate & where to save results
 - Download new dataset and select `test` path
 - Run validation on the test images & store results
 - _**note:** thanks to @ultralytics for [this write up](https://docs.ultralytics.com/modes/val/#example-validation-with-arguments) which helped a lot_
 
 (I'm about to get into the deets, but you can skip to the [summary table](#summary-table) if you're impatient)
 
-### Control group: 
-- first up was establishing a baseline using a 'control group' of models. 
-- I want use the models i trained in my previous experiments to establish a baseline for how they perform on my use-case. 
-- The expectation is that they would do poorly, and sure enough they only landed at `mAP50 = 0.45%` & `mAP50 = 0.42%` for the 1e and 20e respsectively. 
-- The baseline is set. Any notable improvement on those scores is worth exploring. 
-- The working hypothesis at this stage is that the poor performance is the result of domain shift. The only way to test is to train a new model with new dataset: enter nwe models
-### Aerial_1e: 
+### Control group 
+First up I had to establish a baseline. I started with the models from the previous experiment (trained on the ground-level pothole dataset) and ran them agains the aerial-vew pothole test images.
+- **Assumption:** I'm expecting these models to perform poorly. They're specialized for ground-level potholes and but don't generalize well to aerial view ("domain shift")
+- **Conclusion:** 
+
+| Model | mAP50 |
+| -- | -- |
+| [Control_1e](https://huggingface.co/nmata010/street-level-pothole-detection-11192025_1epoch) | 0.45%
+| [Control_20e](https://huggingface.co/nmata010/street-level-pothole-detection-11192025_20epoch) | 0.42%
+These two models were trained on the original ground-level dataset. They perform as poorly as I expected them to, but any notable improvement to these scores is worth exploring. 
+
+
+
+
+### Aerial_1e
+My working assumption at this stage is that the poor performance from the control models is the result of domain shift. The best way to test that is to train a new model with my new aerial dataset and compare. 
+
+So I got my new dataset URL, plopped it into my notebook and trained a 1 epoch model on the new aerial dataset. 
+| Model | mAP50 |
+| -- | -- |
+| [Aerial_1e](https://huggingface.co/nmata010/aerial-pothole-detection-11212025_1Epoch_newDS) | 10.2%
+---
+To test if the problem really was the data, I swapped datasets and re-trained a model. I kept trained for 1epochs to keep the training . out the thousands of street-level images for my modest 558 aerial images. I kept the training time short (1 epoch) to isolate the impact of the data itself.
+
+Hypothesis: If the previous failure was due to domain shift, then training on relevant data (even for a short time) should yield immediate performance gains.
+
+Result: The model hit an mAP50 of 10.2%.
+
+Conclusion: While 10% isn't a "passing grade," context is key here. The control group was stuck at 0.45%. By simply changing the input data—without touching the architecture or increasing training time—we saw a ~22x improvement in performance.
+
+This confirms that the new dataset is valid. The model is finally "seeing" the potholes; now it just needs more time to learn them.
+
+---
+
 - trained on aerial dataset for 1epoch
 - hypothesis is that new dataset will result in better mAP50 because the training data is more relevant to the usecase. 
 - Observation is that we get a jump in performance with `mAP50=10.2%`
 - Conclusion is that we're on to something. I think this confirms domain shift as the problem of the previous models. Its also giving good signal that we've got the right training data, but still falls far short of the benchmark of 50% we're trying to hit. 
-### Aerial_20e:
+### Aerial_20e
+- https://huggingface.co/nmata010/aerial-pothole-detection-11252025_20Epoch_newDS
 - trained on aerial dataset for 20epoch
 - hypothesis is that training for longer will result in significantly improved mAP50
 - observation is that we do get a jump in performance with `mAP50=42.9%`
 - conclusion is that training for longer on the same data set does improve performance significantly. We clearly have the right data and are heading in the right directioin, but again fall short of the 50% benchmark. The performance gains are non-linear, training for 20x longer only yielded 4x improvement
 - here we see major improvements
-### Aerial_350e:
+### Aerial_350e
+- https://huggingface.co/nmata010/aerial-pothole-detection-12022025_350Epoch_newDS
 - trained on aerial dataset for 350epochs
 - hypothesis is that since performance gains are non-linear, we should expect the improvements to trail off. Training for will achieve slight improvements
 - observation is that we do get a milder but still very significant improvement and achieve `mAP50=50.4%`. This took around 2h to train and i struggled with colab limits. This maybe near the upper bound of the training i can do on colab for free. 
 - conclusion is that the performance improvements indeed trail off but not before we reached our benchmark of mAP50=50%. This confirms that we can achieve a POC grade performance with a relatively small training set. How can we squeeze more out of the same data?
 - here we start to see diminishing returns, but still notable improvements 
-### Roboflow_Aerial_350e:
+### Roboflow_Aerial_350e
 - trained on aerial dataset for 350epochs; roboflow does hyperparameter tuning in the background. 
 - hypothesis is that we'll see a very small improvement by leveraging hyper parameter tuning
 - observation is that we see a small but meaningful improvement of 13% by using hyper parameter tuning.
@@ -150,14 +179,14 @@ To be able to get 1:1 comparisons across different models I made some tweaks to 
 ### Summary Table
 
 
-| # | Model | Hypothesis  | Dataset | Epochs | Result (mAP50) | Observation | Conclusion 
+| # | Model | Assumption  | Dataset | Epochs | Result (mAP50) | Observation | Conclusion 
 | -- | -- | -- | -- | -- | -- | -- | -- 
 | 0 | Control_1e | -- | Street-level potholes | 1 | **0.45%** | Model fails on aerial images | **Baseline** 
 | 1 | Control_20e | More training on same data will correct domain shift | Street-level potholes | 20 | **0.42%** | Model fails on aerial images. Underperforms baseline | **Rejected** 
 | 2 | Aerial_1e | Training on images more releavnt to the test case will correct domain shift | Aerial view potholes | 1 | **10.2%** | Significantly outperforms basilne (2.2 OOM) but falls well short of benchmark (50%) |**Supported** 
 | 3 | Aerial_20e | More training on same data will improve model performance | Aerial view potholes | 20 | **42.9%** | Big performance improvement (4.2x). Tracking towards benchmark but still falls short. Training time relates to performance non-linearly | **Supported** 
 | 4 | Aerial_350e | A long training run will yield better performance but a reduced rate. | Aerial view potholes | 350 | **50.4%** | Achieves benchmark! Some improvement (17%) | **Supported** 
-| 5 | Roboflow_Aerial_350e | hyper-parameter tuning = better perf | Aerial view potholes | 350 | **57%** | -- | **Supported** 
+| 5 | RoboflowAerial_350e | hyper-parameter tuning = better perf | Aerial view potholes | 350 | **57%** | -- | **Supported** 
 | 6 | meta/SAM3 | SOTA model will achieve 50% benchmark with no fine-tuning on domain data | -- | --| xx% | Falls far short on average (though does a very well on a few of the individual frames). | **Rejected** 
 
 
