@@ -231,7 +231,7 @@ This was a surprise to me. I just assumed that a big model would easily generali
 
 
 
-## So now what?
+## Conclusion
 So now what? I started with a yolo model that didn't work, and I was able to design and implement a data strategy to make it work. 
 
 That's a fun experiment, but what conclusions do we draw: 
@@ -239,24 +239,13 @@ That's a fun experiment, but what conclusions do we draw:
 2. The law of diminishing returns. Performance gains were huge early on but pleteued quickly. When that happens "more training" stops being a viable strategy.
 3. Controlled experiments. By changing few variables at a time  the cause/effect relationship between the changes and the performance were obvious.  
  
-notes: 
-- Data makes a difference.
-    - Data makes a difference. And a big one at that. 
-    - I want to say something about diminishing returns (the diminishing returns are also visible in the 350e training images)
-- yea the data made the biggest differene
-- long training runs also made a significant difference
-- so did hyperparamater tweaking
-- Confirms that data is king
-- free performance on the table in the form of hyperparameter tuning
-- Got to POC level benchmark
-- "and therefore...?" what do i conclude after all this? 
+In hindsight theres is no net new learnings here, just new places to things we already knew. 
 
-## Now what?
-- cool I did it:
-    - settled on a problem to solve
-    - designed a data strategy that maps to the problem
-    - trained a bunch of models to test different approaches
-    - achieved a POC grade level of performance
+The results of this experiment is a proof of concept model specifically for overhead potholes on dirt roads. But what if we wanted to get to production grade. How might we get there?
+- More data
+- More nuance
+- More training
+- 
 - Whats next?
     - Getting to a production level of performance for fun?
     - Putthing this model on a drone and selling it to rural municipalities?
