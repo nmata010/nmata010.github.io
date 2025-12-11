@@ -230,7 +230,6 @@ This was a surprise to me. I just assumed that a big model would easily generali
 | 6 | [meta/SAM3](insert-link) | SOTA model will achieve 50% benchmark with no fine-tuning on domain data | Aerial view potholes | -- | -- | Detects ~9% of the potholes. | **Rejected** 
 
 
-
 ## Conclusion
 So now what? I started with a yolo model that didn't work, and I was able to design and implement a data strategy to make it work. 
 
@@ -239,20 +238,12 @@ That's a fun experiment, but what conclusions do we draw:
 2. The law of diminishing returns. Performance gains were huge early on but pleteued quickly. When that happens "more training" stops being a viable strategy.
 3. Controlled experiments. By changing few variables at a time  the cause/effect relationship between the changes and the performance were obvious.  
  
-In hindsight theres is no net new learnings here, just new places to things we already knew. 
-
-The results of this experiment is a proof of concept model specifically for overhead potholes on dirt roads. But what if we wanted to get to production grade. How might we get there?
-- More data
-- More nuance
-- More training
-- 
-- Whats next?
-    - Getting to a production level of performance for fun?
-    - Putthing this model on a drone and selling it to rural municipalities?
-    - abandoning it altogether? 
-Idk, but this was fun and i leraned a lot:
-- data makes or breaks the product. Wrong data = no viable outcomes. cut and dry. 
-- Figuring out what experiments to run is both an art and science. It requires thoughtfulness to avoid doing a bunch of things that aren't really helping get closer to a solution.
-- idk what else i learned
+I was able to take <5 min of drone footage and turn it into a working POC in just a few hours. This was an all out success that I wasn't expecting. 
+- Earnestly thought through the type of images and conditions that would make this model successful for the use-case (and published a dataset).
+- Surpassed my target metric (50%) after only 3 model iterations, landing at `mAP50=57%` (I literally jumped with excitement!).
+- Experimented with Meta's new SAM 3 and built out a validation harness to map its inference output to YOLO labels ([opensourced here](insert-link))
 
 ---
+
+This one was a lot of fun. Thanks for reading!
+Nick M.
