@@ -6,13 +6,13 @@ image: /assets/data-strategy-post/test-img-w-masks.png
 ---
 
 ## tl;dr
-- **Clear problem statements are half the battle.** Well defined usecases obviate data requirements. Without this, my experimentation was destined to fail.
-- **Data makes a big difference (duh!).** By selectimg the right data alone i saw performance improvements by 2 OOM. Tweaking training parameters got me to the target benchmark.
-- **Data curation is simple, _not easy_.** Sourcing, annotating, and processing data is a grind but its the _most_ important task and where HITL matters most. Afterall, model quality is _derived_ from data quality.
+- **Clear problem statements are half the battle.** Well-defined usecases obviate data requirements. Without this, my experimentation was destined to fail.
+- **Data makes a big difference (duh!).** By selecting the right data alone I saw performance improvements by 2 OOM. Tweaking training parameters got me to the target benchmark.
+- **Data curation is simple, _not easy_.** Sourcing, annotating, and processing data is a grind but its the _most_ important task and where HITL matters most. After all, model quality is _derived_ from data quality.
 - **Clear outcomes flow from controlled variables.** Trying a bunch of things is the best way to know what does/doesn't work. But changing one variable at a time is key to drawing a line between input changes and performance improvements.
 
 ## Where do we begin?
-Last month I decided to train a computer vision model. It was super easy and fun, but didn't net the best results. There's a [full write up here](/_posts/2025-10-24-training_a_yolo_model.md), but the gist of it is that I didn't really start with the end in mind, and thats how I discovered the importance of data strategy for ML applications. 
+Last month I decided to train a computer vision model. It was super easy and fun, but didn't net the best results. There's a [full write up here](/_posts/2025-10-24-training_a_yolo_model.md), but the gist of it is that I didn't really start with the end in mind, and I discovered the importance of data strategy for ML applications. 
 
 On the heels of that flop my intention was to take on a more thoughtful approach to the notion that _data strategy_ is the difference between a cvis model that works and mine.
 
@@ -28,13 +28,15 @@ Like all things, this seems simple on the surface, but required navigating a lot
 We'll start at the beginning.
 
 ## Defining a clear use case
-Last time I was so gung ho to train a model that skipped over the most important part: **Defining the problem**
+Last time I was so gung ho to train a model that I skipped over the most important part: **Defining the problem**
 
 I needed to take a step back from the 'how' and lean into the 'what'. My previous model faceplanted when running inference on overhead footage of a dirt road. That's a pretty narrow failure condition so it felt like a good starting point. 
 
-In the real world I would want to validate and 'harden' this problem definition with user reasearch and data, but under my current constraints (low budget, no commercial ambitions), this is sufficient. That said, I don't want to understate the importance of this part. I think its the _most important_ part of achieving success on this type of project (maybe all projects).
+In ML this is typically referred to as the "operational design domain" which defines a set of conditions under which the system is meant to operate. For simplicity, I'll refer to it as a _problem definition_ or _use case_. 
 
-So I've got my target. **Usecase:** `Detect potholes from overhead view on dirt roads with little traffic.` 
+In the real world I would want to validate and 'harden' this problem definition with user research and data, but under my current constraints (low budget, no commercial ambitions), this is sufficient. That said, I don't want to understate the importance of this part. I think it's the _most important_ part of achieving success on this type of project (maybe all projects).
+
+So I've got my target. **Usecase (ODD):** `Detect potholes from overhead view on dirt roads with little traffic.` 
 
 Now that I know what problem I want to solve, I'll need a metric to tell me when I've solved it.
 
@@ -46,7 +48,7 @@ Kinda... but there's a couple of questions that need answers:
 1. **What measure signals success?**
     - [mAP](https://blog.roboflow.com/mean-average-precision) (mean average precision) is a standard metric in object detection that balances recall (finding all the objects) with precision (avoiding all the non-objects). 
     - Its a measure of how well the model detects objects when compared to the real object boundary ([this blog](https://jonathan-hui.medium.com/map-mean-average-precision-for-object-detection-45c121a31173) gets into some of the math behind _how_ its calculated).
-    - I'll be using [**mAP50**](https://docs.ultralytics.com/guides/yolo-performance-metrics/#class-wise-metrics) as my measure for performance. Its a pretty leinient metric, but still gives clear signal on whether or not the right object is being detected.
+    - I'll be using [**mAP50**](https://docs.ultralytics.com/guides/yolo-performance-metrics/#class-wise-metrics) as my measure for performance. Its a pretty lenient metric, but still gives clear signal on whether or not the right object is being detected.
 2. **What threshold is sufficient?** 
     - Stated differently: "If mAP50 is the test, what score must the model achieve to prove its ability?"
     - I'm trying to prove traction towards a solution, not achieve perfection on the first try. I think a `mAP50=50%` sufficiently demonstrates utility while leaving lots of room for improvement.
@@ -62,7 +64,7 @@ I'll need to manually tag some images with potholes which begs the question:
     - All puddles are potholes (but not the inverse). 
     - Not all potholes are circular. They can be uniquely shaped.
 
-I used [roboflow](https://roboflow.com/) to pull frames from the video that caused my original model to fail and manually annotated ~1500 potholes to become my 'Test' dataset. I'll benchmark all the models I train against this test set to draw a clear conclusion on how well we're adressing the problem. 
+I used [roboflow](https://roboflow.com/) to pull frames from the video that caused my original model to fail and manually annotated ~1500 potholes to become my ground truth dataset. I'll benchmark all the models I train against this test set to draw a clear conclusion on how well we're addressing the problem. 
 
 Now that I've got a KPI to target we can talk data that'll get us there.
 
@@ -76,16 +78,16 @@ Again, this seems simple but there are nuances to manage:
 - Potholes look differently at different overhead distances and angles. 
 - View of road can be partially obstructed by natural elements, like trees.
 
-I'll need to source training data that adequately represents this variance.
+I'll need to source training data that adequately represents this intra-class variance.
 
-I expected to find public-license datasets that matched my usecase, but I was met with a-whole-lotta-nothing. I decided the best parth forward would be to source my own training data. 
+I expected to find public-license datasets that matched my usecase, but I was met with a-whole-lotta-nothing. I decided the best path forward would be to source my own training data. 
 
 For this experiment I followed the following constraints:
-1. **Ethicaly sourced:** Ethics in data matters. I wanted to make sure the data I curated was ethically sourced. This is not a commercial pursuit, so I leaned on fair-use.
+1. **Ethically sourced:** Ethics in data matters. I wanted to make sure the data I curated was ethically sourced. This is not a commercial pursuit, so I leaned on fair-use.
 2. **Hybrid data:** I wanted to mix real and synthetic data. I used [Pexels](https://www.pexels.com/) for royalty-free stock footage and [Veo 3](https://deepmind.google/models/veo/) for some synthetic training examples.
 3. **Highly curated:** I have limited bandwidth so I'm prioritizing quality>quantity. I cherry picked material that represented the nuance sufficiently, but didn't go beyond that.
 
-I decided on 1 img per second of video. This approach got me to a final count of 215 images covering the full spectrum of variance mentioned earlier (~550 after augmentation). This is a good start, but these are just raw images. I still need to this collection into a labeled dataset. 
+I decided on 1 img per second of video. This approach got me to a final count of 215 images covering the full spectrum of variance mentioned earlier (~550 after augmentation). This is a good start, but these are just raw images. I still need to turn this collection into a labeled dataset. 
 
 ---
 
@@ -103,12 +105,13 @@ We're ready to start training and tweaking models!
 ## Running experiments
 Alright! I have a problem to solve, a KPI to target, and a dataset that I'm hoping will get me there. Lets get into it!
 
-This is the loop I generally followed. It didn't always go flow linearly, but for the most part I changed 1 variable at a time to get clear signal on what was affecting the mAP results:
+This is the loop I generally followed. It didn't always flow linearly, but for the most part I changed 1 variable at a time to get clear signal on what was affecting the mAP results:
 1. Make an assumption.
 2. Change a training variable to test that assumption.
 3. Train a model with those variables.
 4. Benchmark it on new dataset & record outcome.
 5. Come to a conclusion & start over.
+
 
 To get 1:1 comparisons across different models I made some tweaks to the [open-source colab notebook](https://github.com/mfranzon/yolo-training-template/blob/main/notebooks/yolo_template.ipynb) I'm using. These changes let me add validation without changing the existing training/inference scripts: 
 - Pick which model to validate & where to save results
@@ -119,8 +122,8 @@ To get 1:1 comparisons across different models I made some tweaks to the [open-s
 (I'm about to get into the deets, but you can skip to the [summary table](#summary-table) if you're impatient)
 
 ### Control group 
-First up I had to establish a baseline. I started with the models from the previous experiment (trained on the ground-level pothole dataset) and ran them agains the aerial-vew pothole test images.
-- **Assumption:** I'm expecting these models to perform poorly. They're specialized for ground-level potholes and but don't generalize well to aerial view ("domain shift")
+First up I had to establish a baseline. I started with the models from the previous experiment (trained on the ground-level pothole dataset) and ran them against the aerial-view pothole test images.
+- **Assumption:** I'm expecting these models to perform poorly. They're specialized for ground-level potholes but don't generalize well to aerial view ("domain shift")
 - **Result:** 
 
 | Model | mAP50 |
@@ -159,7 +162,7 @@ Domain shift is confirmed. My model Aerial_1e model is showing signs of life (an
 
 - **Conclusion:** Nice! Another major improvement with a relatively short training run. IMO this proves that data strategy is the difference maker. 
 
-This model performs pretty and comes very close to the threshold metric, but still comes just shy of it. I also note that for 20x the training the mAP50 improved by 4x, so there's some diminishing returns on training time. 
+This model performs pretty well and comes very close to the threshold metric, but still comes just shy of it. I also note that for 20x the training the mAP50 improved by 4x, so there's some diminishing returns on training time. This is commonly referred to as _convergence_ and signals that the model is stabilizing and won't significantly improve with more training. 
 
 ### Aerial_350e
 We know we're training on the right data but still falling short of the 50% target. Earlier I noted that the relationship between training time and mAP were non-linear but I don't think we're at the upper bound yet. We're on to something that works so lets find the limit.
@@ -172,7 +175,7 @@ We know we're training on the right data but still falling short of the 50% targ
 | -- | -- |
 | [Aerial_350e](https://huggingface.co/nmata010/aerial-pothole-detection-12022025_350Epoch_newDS) | 50.4%
 
-- **Conclusion:** WOW! It worked.. After a 2h training and battling Colab limits we passed the target benchmark by a hair. This was a 17% improvement against Aerial_20e which also confirms the dimishing returns concept. 
+- **Conclusion:** WOW! It worked.. After a 2h training and battling Colab limits we passed the target benchmark by a hair. This was a 17% improvement against Aerial_20e which also confirms the diminishing returns concept. 
 
 I'm blown away that I was able to hit the 50% mark. I didn't have high hopes. Its far from 'production grade' but this is a legit proof of concept model for its very specific intended purpose!
 
@@ -235,7 +238,7 @@ So now what? I started with a yolo model that didn't work, and I was able to des
 
 That's a fun experiment, but what conclusions do we draw: 
 1. Data makes the difference. This is obvious in hindsight, but worth repeating and extends beyond cvis. No training tweaks were going to fix the original control models. 
-2. The law of diminishing returns. Performance gains were huge early on but pleteued quickly. When that happens "more training" stops being a viable strategy.
+2. The law of diminishing returns. Performance gains were huge early on but plateaued quickly. When that happens "more training" stops being a viable strategy.
 3. Controlled experiments. By changing few variables at a time  the cause/effect relationship between the changes and the performance were obvious.  
  
 I was able to take <5 min of drone footage and turn it into a working POC in just a few hours. This was an all out success that I wasn't expecting. 
@@ -246,4 +249,5 @@ I was able to take <5 min of drone footage and turn it into a working POC in jus
 ---
 
 This one was a lot of fun. Thanks for reading!
+
 Nick M.
