@@ -85,7 +85,7 @@ For this experiment I followed the following constraints:
 2. **Hybrid data:** I wanted to mix real and synthetic data. I used [Pexels](https://www.pexels.com/) for royalty-free stock footage and [Veo 3](https://deepmind.google/models/veo/) for some synthetic training examples.
 3. **Highly curated:** I have limited bandwidth so I'm prioritizing quality>quantity. I cherry picked material that represented the nuance sufficiently, but didn't go beyond that.
 
-I decided on 1 img per second of video. This approach got me to a final count of ~550 images covering the full spectrum of variance mentioned earlier. This is a good start, but these are just raw images. I still need to this collection into a labeled dataset. 
+I decided on 1 img per second of video. This approach got me to a final count of 215 images covering the full spectrum of variance mentioned earlier (~550 after augmentation). This is a good start, but these are just raw images. I still need to this collection into a labeled dataset. 
 
 ---
 
@@ -174,50 +174,77 @@ We know we're training on the right data but still falling short of the 50% targ
 
 - **Conclusion:** WOW! It worked.. After a 2h training and battling Colab limits we passed the target benchmark by a hair. This was a 17% improvement against Aerial_20e which also confirms the dimishing returns concept. 
 
-I'm blown away that I was able to hit the 50% mark. Its far from 'production grade' This is a legit proof of concept model for its very specific intended purpose!
+I'm blown away that I was able to hit the 50% mark. I didn't have high hopes. Its far from 'production grade' but this is a legit proof of concept model for its very specific intended purpose!
 
 ### Roboflow_Aerial_350e
-intro
+I hit my target (50%) and that feels like the upper limit of what I can achieve with such a simple setup and a free Colab GPU.
 
-- **Assumption:** can get more for the same inputs on a production quality training harness (instead of the open source notebook)
-- **Variable:** Hyper-parameter tuning with Roboflow
+The default settings in my notebook were likely leaving some performance on the table. I came across this [Roboflow article](https://blog.roboflow.com/what-is-hyperparameter-tuning/) on their implementation of hyper parameter tuning and how it can maximize performance with no setup on my end. 
+
+- **Assumption:** Default hyperparameters are good-enough, but hyper parameter tuning will yield better results for the same inputs. 
+- **Variable:** Training with Roboflow (instead of Colab)
 - **Results:**
 
 | Model | mAP50 |
 | -- | -- |
-| [Aerial_350e](www.roboflow.com) | 57%
+| [Roboflow_Aerial_350e](www.roboflow.com) | 57%
 
-- **Conclusion:** this shit makes a diff
+- **Conclusion:** Optimization matters! 13% improvement for the same training epochs. Negligible setup compared to colab.
 
-somethign about getting to production
+This part of the experiment taught me a few lessons. 
+- First off, optimzation makes a big difference. 
+- Second, this took almost no setup, cost $0, and took around half the training time (~1h). Comparing to the effort to manually setup, maintain, and expand my notebook, this was a walk in the park. 
+- Finally, if a SOTA training harness only gets us to mAP50=57% then its fair to assume that getting to production-grade is just not in the cards with the current dataset. 
 
----
+### Enter SAM3
+While I was running and documenting the above experiments Meta released their latest 'Segment Anything Model' [SAM 3](https://ai.meta.com/sam3/). Meta's SAM 3 is a new SOTA model thats capable of detecting (and masking) objects based just on language inputs. 
 
-- trained on aerial dataset for 350epochs; roboflow does hyperparameter tuning in the background. 
-- hypothesis is that we'll see a very small improvement by leveraging hyper parameter tuning
-- observation is that we see a small but meaningful improvement of 13% by using hyper parameter tuning.
-- conclusion is that getting to production grade (mAP50=95%) likely requires more robust data _and_ hyper parameter tuning. 
+Why should anyone train a custom model at all? In theory, I should be able to just ask SAM 3 to identify "potholes" and it will return image/video with a perfect polygon around each pothole. 
+
+The SAM 3 demo app is impressive. On first glance it looks like it could perform really well relative to my custom models. I wanted to put it to the test and see how it compared.
+
+- **Assumption:** Huge SOTA model should just work. Built for 'zero shot' prompting with just text and no examples. I think it's going to perform far better than my custom models. 
+- **Testing:** I wrote a [script](insert-link) to run inference on my test data using "Pothole" as the prompt. My script returns polygons in the same format as the custom models, but calculating mAP from these requires some polygon math (intersection over union) that I couldn't get into. I decided to go with a count of objects as a gut-check metric for success. 
+- **Result:**
+
+| Model | Pothole Count |
+| -- | -- |
+| meta/sam3 | 125
+| Aerial_350e | 1444
+
+- **Conclusion:** This was kind of an apples:oranges comparison. SAM 3 was much slower than the YOLO models, but that was expected. For object detection it was hit or miss on the aerial test data (mostly miss). In a few of the images it picked up a good portion of potholes, but for the majority it failed to identify _any_. 
+
+This was a surprise to me. I just assumed that a big model would easily generalize to most tasks. As it turns out, fine-tuned models are still needed for specific tasks. SAM 3 was not a great fit on my use-case (apart from being slow and costly compared to YOLO models).
 
 ### Summary Table
 
 
 | # | Model | Assumption  | Dataset | Epochs | Result (mAP50) | Observation | Conclusion 
 | -- | -- | -- | -- | -- | -- | -- | -- 
-| 0 | Control_1e | -- | Street-level potholes | 1 | **0.45%** | Model fails on aerial images | **Baseline** 
-| 1 | Control_20e | More training on same data will correct domain shift | Street-level potholes | 20 | **0.42%** | Model fails on aerial images. Underperforms baseline | **Rejected** 
-| 2 | Aerial_1e | Training on images more releavnt to the test case will correct domain shift | Aerial view potholes | 1 | **10.2%** | Significantly outperforms basilne (2.2 OOM) but falls well short of benchmark (50%) |**Supported** 
-| 3 | Aerial_20e | More training on same data will improve model performance | Aerial view potholes | 20 | **42.9%** | Big performance improvement (4.2x). Tracking towards benchmark but still falls short. Training time relates to performance non-linearly | **Supported** 
-| 4 | Aerial_350e | A long training run will yield better performance but a reduced rate. | Aerial view potholes | 350 | **50.4%** | Achieves benchmark! Some improvement (17%) | **Supported** 
-| 5 | RoboflowAerial_350e | hyper-parameter tuning = better perf | Aerial view potholes | 350 | **57%** | -- | **Supported** 
-| 6 | meta/SAM3 | SOTA model will achieve 50% benchmark with no fine-tuning on domain data | -- | --| xx% | Falls far short on average (though does a very well on a few of the individual frames). | **Rejected** 
+| 0 | [Control_1e](https://huggingface.co/nmata010/street-level-pothole-detection-11192025_1epoch) | -- | Street-level potholes | 1 | **0.45%** | Model fails on aerial images | **Baseline** 
+| 1 | [Control_20e](https://huggingface.co/nmata010/street-level-pothole-detection-11192025_20epoch) | More training on same data will correct domain shift | Street-level potholes | 20 | **0.42%** | Model fails on aerial images. Underperforms baseline | **Rejected** 
+| 2 | [Aerial_1e](https://huggingface.co/nmata010/aerial-pothole-detection-11212025_1Epoch_newDS) | Training on images more releavnt to the test case will correct domain shift | Aerial view potholes | 1 | **10.2%** | Significantly outperforms basilne (2.2 OOM) but falls well short of benchmark (50%) |**Supported** 
+| 3 | [Aerial_20e](https://huggingface.co/nmata010/aerial-pothole-detection-11252025_20Epoch_newDS) | More training on same data will improve model performance | Aerial view potholes | 20 | **42.9%** | Big performance improvement (4.2x). Tracking towards benchmark but still falls short. Training time relates to performance non-linearly | **Supported** 
+| 4 | [Aerial_350e](https://huggingface.co/nmata010/aerial-pothole-detection-12022025_350Epoch_newDS) | A long training run will yield better performance but a reduced rate. | Aerial view potholes | 350 | **50.4%** | Achieves benchmark! Notable improvement (17%) | **Supported** 
+| 5 | [RoboflowAerial_350e](insert-link) | Prod grade training will yield better performance | Aerial view potholes | 350 | **57%** | Notable improvement (13%) vs hyper parameter defaults | **Supported** 
+| 6 | [meta/SAM3](insert-link) | SOTA model will achieve 50% benchmark with no fine-tuning on domain data | Aerial view potholes | -- | -- | Detects ~9% of the potholes. | **Rejected** 
 
 
 
-## So what? (conclusion)
+## So now what? (conclusion)
+So now what? I started with a yolo model that didn't work, and I was able to design and implement a data strategy to make it work. 
+
+That's a fun experiment, but what conclusions do we draw: 
+1. Data makes the difference. This is obvious in hindsight, but worth repeating and extends beyond cvis. No training tweaks were going to fix the original control models. 
+2. Dimishing returns. SOTA models are getting really good really fast. I wasn't able to get real trac
+- Data makes a difference.
+    - Data makes a difference. And a big one at that. 
+    - I want to say something about diminishing returns (the diminishing returns are also visible in the 350e training images)
 - yea the data made the biggest differene
 - long training runs also made a significant difference
 - so did hyperparamater tweaking
 - Confirms that data is king
+- free performance on the table in the form of hyperparameter tuning
 - Got to POC level benchmark
 - "and therefore...?" what do i conclude after all this? 
 
@@ -235,32 +262,6 @@ Idk, but this was fun and i leraned a lot:
 - data makes or breaks the product. Wrong data = no viable outcomes. cut and dry. 
 - Figuring out what experiments to run is both an art and science. It requires thoughtfulness to avoid doing a bunch of things that aren't really helping get closer to a solution.
 - idk what else i learned
-
-## Data makes a difference
-- Data makes a difference. And a big one at that. 
-- I want to say something about diminishing returns (the diminishing returns are also visible in the 350e training images)
-
-
-## The scientific method
-I really wanted this to be scientific and not just 'trying things til something works'. This is the real process you have to follow in the real world. You have to control variables to create reliable observations, otherwise you don't know what worked and why. 
-
-My plan is pretty simple:
-- Observation: The models trained on street-level potholes performed poorly on aerial dirt-road usecase. (1e mAP50: 0.0045, 20e mAP50: 0.00421)
-- Hypothesis: This is a domain shift resulting from training data that does not match the usecase. Using domain specific training data will allow me to achieve mAP50 of 0.5
-- Experiment: Train various models and change one single idk idk idk this doesnt make sense for so many experiments unless i'm gonna write a whole paper on it.
-
-
-- observation
-- question
-- hypothesis
-- experiment
-- analysis
-- conclusion
-
-
-## The Experiments
-
-We ran a series of experiments, treating each as a variable to isolate what actually drives performance.
 
 ---
 # Notes
