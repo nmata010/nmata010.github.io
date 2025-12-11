@@ -16,7 +16,7 @@ Last month I decided to train a computer vision model. It was super easy and fun
 
 On the heels of that flop my intention was to take on a more thoughtful approach to the notion that _data strategy_ is the difference between a cvis model that works and mine.
 
-So as to not leave any loose threads from my last post (and to have fun things to do over the long thanksgiving weekend) I set out to solve my domain shit problem by:
+So as to not leave any loose threads from my last post (and to have fun things to do over the long thanksgiving weekend) I set out to solve my domain shift problem by:
 - Defining a [clear usecase](#defining-a-clear-use-case) to serve as a 'what' and 'why' anchor for my experimentation.
 - Decide on a [success metric](#deciding-on-a-benchmark) for this usecase that will provide an objective measurement on performance.
 - [Cultivate](#data-strategy) and [prepare](#preparing-the-data) relevant training data in support of my usecase.
