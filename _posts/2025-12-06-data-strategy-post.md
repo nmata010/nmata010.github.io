@@ -231,12 +231,15 @@ This was a surprise to me. I just assumed that a big model would easily generali
 
 
 
-## So now what? (conclusion)
+## So now what?
 So now what? I started with a yolo model that didn't work, and I was able to design and implement a data strategy to make it work. 
 
 That's a fun experiment, but what conclusions do we draw: 
 1. Data makes the difference. This is obvious in hindsight, but worth repeating and extends beyond cvis. No training tweaks were going to fix the original control models. 
-2. Dimishing returns. SOTA models are getting really good really fast. I wasn't able to get real trac
+2. The law of diminishing returns. Performance gains were huge early on but pleteued quickly. When that happens "more training" stops being a viable strategy.
+3. Controlled experiments. By changing few variables at a time  the cause/effect relationship between the changes and the performance were obvious.  
+ 
+notes: 
 - Data makes a difference.
     - Data makes a difference. And a big one at that. 
     - I want to say something about diminishing returns (the diminishing returns are also visible in the 350e training images)
