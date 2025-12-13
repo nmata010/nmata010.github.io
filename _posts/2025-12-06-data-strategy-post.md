@@ -6,10 +6,11 @@ image: /assets/data-strategy-post/test-img-w-masks.png
 ---
 
 ## tl;dr
-- **Clear problem statements are half the battle.** Well-defined usecases obviate data requirements. Without this, my experimentation was destined to fail.
+- **Clear problem statements are half the battle.** Well-defined usecases obviate data requirements. Without this, my experimentation was going to fail.
 - **Data makes a big difference (duh!).** By selecting the right data alone I saw performance improvements by 2 OOM. Tweaking training parameters got me to the target benchmark.
-- **Data curation is simple, _not easy_.** Sourcing, annotating, and processing data is a grind but its the _most_ important task and where HITL matters most. After all, model quality is _derived_ from data quality.
-- **Clear outcomes flow from controlled variables.** Trying a bunch of things is the best way to know what does/doesn't work. But changing one variable at a time is key to drawing a line between input changes and performance improvements.
+- **Data curation is simple, _not easy_.** Sourcing, annotating, and processing data is a grind but its the _most_ important task and where HITL matters most.
+- **Clear outcomes flow from controlled variables.** Trying a bunch of things is the best way to know what does/doesn't work. But changing one variable at a time draws a line between input changes and performance.
+- **Opensource:** The full source, notebooks, and scripts are available on [GitHub](https://github.com/nmata010/aerial-pothole-detection).
 
 ## Where do we begin?
 Last month I decided to train a computer vision model. It was super easy and fun, but didn't net the best results. There's a [full write up here](/_posts/2025-10-24-training_a_yolo_model.md), but the gist of it is that I didn't really start with the end in mind, and I discovered the importance of data strategy for ML applications. 
@@ -207,7 +208,7 @@ Why should anyone train a custom model at all? In theory, I should be able to ju
 The SAM 3 demo app is impressive. On first glance it looks like it could perform really well relative to my custom models. I wanted to put it to the test and see how it compared.
 
 - **Assumption:** Huge SOTA model should just work. Built for 'zero shot' prompting with just text and no examples. I think it's going to perform far better than my custom models. 
-- **Testing:** I wrote a [script](insert-link) to run inference on my test data using "Pothole" as the prompt. My script returns polygons in the same format as the custom models, but calculating mAP from these requires some polygon math (intersection over union) that I couldn't get into. I decided to go with a count of objects as a gut-check metric for success. 
+- **Testing:** I wrote a [script](https://github.com/nmata010/aerial-pothole-detection/blob/main/Notebooks/02_sam3_get_labels.ipynb) to run inference on my test data using "Pothole" as the prompt. It returns polygons in the same format as the custom models. Calculating mAP from these requires some polygon math (intersection over union) that I couldn't get into. I decided to go with a count of objects as a gut-check metric for success. 
 - **Result:**
 
 | Model | Pothole Count |
@@ -229,8 +230,8 @@ This was a surprise to me. I just assumed that a big model would easily generali
 | 2 | [Aerial_1e](https://huggingface.co/nmata010/aerial-pothole-detection-11212025_1Epoch_newDS) | Training on images more releavnt to the test case will correct domain shift | Aerial view potholes | 1 | **10.2%** | Significantly outperforms basilne (2.2 OOM) but falls well short of benchmark (50%) |**Supported** 
 | 3 | [Aerial_20e](https://huggingface.co/nmata010/aerial-pothole-detection-11252025_20Epoch_newDS) | More training on same data will improve model performance | Aerial view potholes | 20 | **42.9%** | Big performance improvement (4.2x). Tracking towards benchmark but still falls short. Training time relates to performance non-linearly | **Supported** 
 | 4 | [Aerial_350e](https://huggingface.co/nmata010/aerial-pothole-detection-12022025_350Epoch_newDS) | A long training run will yield better performance but a reduced rate. | Aerial view potholes | 350 | **50.4%** | Achieves benchmark! Notable improvement (17%) | **Supported** 
-| 5 | [RoboflowAerial_350e](insert-link) | Prod grade training will yield better performance | Aerial view potholes | 350 | **57%** | Notable improvement (13%) vs hyper parameter defaults | **Supported** 
-| 6 | [meta/SAM3](insert-link) | SOTA model will achieve 50% benchmark with no fine-tuning on domain data | Aerial view potholes | -- | -- | Detects ~9% of the potholes. | **Rejected** 
+| 5 | [RoboflowAerial_350e](https://github.com/nmata010/aerial-pothole-detection/blob/main/Notebooks/01_train_and_validate_yolo.ipynb) | Prod grade training will yield better performance | Aerial view potholes | 350 | **57%** | Notable improvement (13%) vs hyper parameter defaults | **Supported** 
+| 6 | [meta/SAM3](https://huggingface.co/facebook/sam3) | SOTA model will achieve 50% benchmark with no fine-tuning on domain data | Aerial view potholes | -- | -- | Detects ~9% of the potholes. | **Rejected** 
 
 
 ## Conclusion
@@ -244,7 +245,7 @@ That's a fun experiment, but what conclusions do we draw:
 I was able to take <5 min of drone footage and turn it into a working POC in just a few hours. This was an all out success that I wasn't expecting. 
 - Earnestly thought through the type of images and conditions that would make this model successful for the use-case (and published a dataset).
 - Surpassed my target metric (50%) after only 3 model iterations, landing at `mAP50=57%` (I literally jumped with excitement!).
-- Experimented with Meta's new SAM 3 and built out a validation harness to map its inference output to YOLO labels ([opensourced here](insert-link))
+- Experimented with Meta's new SAM 3 and built out a validation harness to map its inference output to YOLO labels ([opensourced here](https://github.com/nmata010/aerial-pothole-detection))
 
 ---
 
