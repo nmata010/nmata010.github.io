@@ -12,6 +12,10 @@ image: /assets/data-strategy-post/test-img-w-masks.png
 - **Clear outcomes flow from controlled variables.** Trying a bunch of things is the best way to know what does/doesn't work. But changing one variable at a time draws a line between input changes and performance.
 - **Opensource:** The full source, notebooks, and scripts are available on [GitHub](https://github.com/nmata010/aerial-pothole-detection).
 
+| Before | After 
+| -- | --
+| ![1epoch_annotated_vid.gif](/assets/2025-12-06-data-strategy-post/1epoch_annotated_vid.gif) | ![350epoch_annotated_vid.gif](../assets/2025-12-06-data-strategy-post/350epoch_annotated_vid.gif)
+
 ## Where do we begin?
 Last month I decided to train a computer vision model. It was super easy and fun, but didn't net the best results. There's a [full write up here](/_posts/2025-10-24-training_a_yolo_model.md), but the gist of it is that I didn't really start with the end in mind, and I discovered the importance of data strategy for ML applications. 
 
