@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "WIP - Data strategy to correct domain shift"
+title: "Domain shift & Data strategy"
 date: 2025-12-06
 image: /assets/data-strategy-post/test-img-w-masks.png
 ---
