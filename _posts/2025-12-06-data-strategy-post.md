@@ -14,7 +14,7 @@ image: /assets/data-strategy-post/test-img-w-masks.png
 
 | Before | After 
 | -- | --
-| ![1epoch_annotated_vid.gif](/assets/2025-12-06-data-strategy-post/1epoch_annotated_vid.gif) | ![350epoch_annotated_vid.gif](../assets/2025-12-06-data-strategy-post/350epoch_annotated_vid.gif)
+| ![1epoch_annotated_vid.gif](/assets/2025-12-06-data-strategy-post/1epoch_annotated_vid.gif) | ![350epoch_annotated_vid.gif](/assets/2025-12-06-data-strategy-post/350epoch_annotated_vid.gif) |
 
 ## Where do we begin?
 Last month I decided to train a computer vision model. It was super easy and fun, but didn't net the best results. There's a [full write up here](/_posts/2025-10-24-training_a_yolo_model.md), but the gist of it is that I didn't really start with the end in mind, and I discovered the importance of data strategy for ML applications. 
@@ -230,7 +230,7 @@ I wanted to put it to the test and see how it compared.
 
 | 50% Conf | 25% Conf |
 | -- | -- |
-| ![sam3-50pct.gif](../assets/2025-12-06-data-strategy-post/SAM3-50pct-Conf.gif) | ![sam3-25pct.gif](../assets/2025-12-06-data-strategy-post/SAM3-25pct-Conf.gif) |
+| ![sam3-50pct.gif](/assets/2025-12-06-data-strategy-post/SAM3-50pct-Conf.gif) | ![sam3-25pct.gif](/assets/2025-12-06-data-strategy-post/SAM3-25pct-Conf.gif) |
 
 - **Conclusion:** This was a blowout in terms of identifying the objects I was interested in. SAM 3 was much slower, but that was expected. It got even better with confidence tuning. 
 
@@ -240,7 +240,7 @@ But overall, SAM 3 got insanely close to the ground truth objects that were _man
 
 | Ground Truth | SAM 3 @ 25% Conf |
 | -- | -- |
-| ![ground-truth-last-frame.png](../assets/2025-12-06-data-strategy-post/ground-truth-last-frame.png) | ![sam3-25pct-last-frame.jpg](../assets/2025-12-06-data-strategy-post/sam3-25pct-last-frame.jpg) |
+| ![ground-truth-last-frame.png](/assets/2025-12-06-data-strategy-post/ground-truth-last-frame.png) | ![sam3-25pct-last-frame.jpg](/assets/2025-12-06-data-strategy-post/sam3-25pct-last-frame.jpg) |
 
 ### Summary Table
 
