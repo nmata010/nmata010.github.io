@@ -58,23 +58,28 @@ Kinda... but there's a couple of questions that need answers:
     - Stated differently: "If mAP50 is the test, what score must the model achieve to prove its ability?"
     - I'm trying to prove traction towards a solution, not achieve perfection on the first try. I think a `mAP50=50%` sufficiently demonstrates utility while leaving lots of room for improvement.
 
-The metric (mAP50) and threshold (50%) I chose both depend on validating performance on images with real potholes already identified (test data). Running these metrics against the irrelevant test data would yield useless results. 
+The metric (mAP50) and threshold (50%) I chose both depend on validating performance on images with real potholes already identified (ground truth). Running these metrics against the irrelevant test data would yield useless results. 
 
 I'll need to manually tag some images with potholes which begs the question:
 
 **What is a pothole?** 
 - Definition: _a depression or hollow in a road surface caused by wear or sinking_.
 - For the sake of this experiment I made some convenient assumptions:
-    - All _road_ defects are potholes. _Ground_ defects off road **are not** potholes.
+    - All _road_ defects are potholes. _Ground_ defects (off road) **are not** potholes.
     - All puddles are potholes (but not the inverse). 
-    - Not all potholes are circular. They can be uniquely shaped.
+    - Potholes can be uniquely shaped (not just circular).
 
-I used [roboflow](https://roboflow.com/) to pull frames from the video that caused my original model to fail and manually annotated ~1500 potholes to become my ground truth dataset. I'll benchmark all the models I train against this test set to draw a clear conclusion on how well we're addressing the problem. 
+I used [roboflow](https://roboflow.com/) to pull frames from the video that caused my original model to fail and manually annotated ~1500 potholes to become my ground truth dataset. I'll benchmark all the models I train against this ground truth set to draw a clear conclusion on how well we're addressing the problem. 
 
 Now that I've got a KPI to target we can talk data that'll get us there.
 
 ## Data strategy
 With a clear problem statement the data required is obvious: I need overhead images of dirt roads with potholes. 
+
+| This | Not This |
+| -- | -- |
+| ![aerial-potholes.jpg](/assets/2025-12-06-data-strategy-post/aerial-potholes.jpg) | ![street-level-pothole.jpeg](/assets/2025-12-06-data-strategy-post/street-level-pothole.jpeg) |
+
 
 Again, this seems simple but there are nuances to manage:
 - Dirt roads look differently at different times of day.
@@ -228,15 +233,16 @@ I wanted to put it to the test and see how it compared.
 | meta/sam3 | 50% | 558 | 38.6%
 | meta/sam3 | 25% | 1142 | 79.1%
 
+- **Conclusion:** This was a blowout in terms of identifying the objects I was interested in. SAM 3 was much slower, but that was expected. It got even better with confidence tuning. 
+
 | 50% Conf | 25% Conf |
 | -- | -- |
 | ![sam3-50pct.gif](/assets/2025-12-06-data-strategy-post/SAM3-50pct-Conf.gif) | ![sam3-25pct.gif](/assets/2025-12-06-data-strategy-post/SAM3-25pct-Conf.gif) |
 
-- **Conclusion:** This was a blowout in terms of identifying the objects I was interested in. SAM 3 was much slower, but that was expected. It got even better with confidence tuning. 
 
-From a model to model perspective its kind of apples:oranges comparison. SAM 3 was much slower than the YOLO models, but that was expected. 
+From a model to model perspective its kind of apples:oranges comparison. SAM 3 was much slower than the YOLO models, but that was expected. But in terms of identifying the objects I wanted, SAM 3 was a big winner. 
 
-But overall, SAM 3 got insanely close to the ground truth objects that were _manually_ labeled. Color me impressed. 
+Overall, SAM 3 got insanely close to the ground truth objects that were _manually_ labeled. Color me impressed. 
 
 | Ground Truth | SAM 3 @ 25% Conf |
 | -- | -- |
@@ -260,12 +266,12 @@ But overall, SAM 3 got insanely close to the ground truth objects that were _man
 So now what? I started with a yolo model that didn't work, and I was able to design and implement a data strategy to make it work. 
 
 That's a fun experiment, but what conclusions do we draw: 
-1. Data makes the difference. This is obvious in hindsight, but worth repeating and extends beyond cvis. No training tweaks were going to fix the original control models. 
-2. The law of diminishing returns. Performance gains were huge early on but plateaued quickly. When that happens "more training" stops being a viable strategy.
-3. Controlled experiments. By changing few variables at a time  the cause/effect relationship between the changes and the performance were obvious.  
-4. SAM 3 is a game changer for computer vision. 
+1. **Data makes the difference.** This is obvious in hindsight, but worth repeating and extends beyond cvis. No training tweaks were going to fix the original control models. 
+2. **The law of diminishing returns.** Performance gains were huge early on but plateaued quickly. When that happens "more training" stops being a viable strategy.
+3. **Controlled experiments.** By changing few variables at a time  the cause/effect relationship between the changes and the performance were obvious.  
+4. **SAM 3 is a game changer.** There's some big-time tradeoffs to using SAM3 in terms of speed, so it might not be ideal for real-time. But nearly eclipsing my modles right off-the-shelf _with zero examples_ is next level for cvis. 
  
-I was able to take <5 min of drone footage and turn it into a working POC in just a few hours. This was an all out success that I wasn't expecting. 
+I took <5 min of drone footage and turned it into a working POC in just a few hours. This was an all out success that I wasn't expecting. 
 - Earnestly thought through the type of images and conditions that would make this model successful for the use-case (and published a dataset).
 - Surpassed my target metric (50%) after only 3 model iterations, landing at `mAP50=57%` (I literally jumped with excitement!).
 - Experimented with Meta's new SAM 3 and built out a validation harness to map its inference output to YOLO labels ([opensourced here](https://github.com/nmata010/aerial-pothole-detection))
