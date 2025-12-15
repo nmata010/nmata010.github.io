@@ -207,22 +207,40 @@ This part of the experiment taught me a few lessons.
 ### Enter SAM3
 While I was running and documenting the above experiments Meta released their latest 'Segment Anything Model' [SAM 3](https://ai.meta.com/sam3/). Meta's SAM 3 is a new SOTA model thats capable of detecting (and masking) objects based just on language inputs. 
 
-Why should anyone train a custom model at all? In theory, I should be able to just ask SAM 3 to identify "potholes" and it will return image/video with a perfect polygon around each pothole. 
+In theory, I should be able to just ask SAM 3 to identify "potholes" (or "puddles") and it will return image/video with a perfect polygon around each pothole. 
 
-The SAM 3 demo app is impressive. On first glance it looks like it could perform really well relative to my custom models. I wanted to put it to the test and see how it compared.
+The demo app is impressive. On first glance it looks like it could perform really well relative to my custom models, but SAM 3 totally flopped when i tried to use it for labeling.
+
+I wanted to put it to the test and see how it compared.
 
 - **Assumption:** Huge SOTA model should just work. Built for 'zero shot' prompting with just text and no examples. I think it's going to perform far better than my custom models. 
-- **Testing:** I wrote a [script](https://github.com/nmata010/aerial-pothole-detection/blob/main/Notebooks/02_sam3_get_labels.ipynb) to run inference on my test data using "Pothole" as the prompt. It returns polygons in the same format as the custom models. Calculating mAP from these requires some polygon math (intersection over union) that I couldn't get into. I decided to go with a count of objects as a gut-check metric for success. 
+- **Testing:** 
+  - I wrote a [script](https://github.com/nmata010/aerial-pothole-detection/blob/main/Notebooks/02_sam3_get_labels.ipynb) to run inference on my test data using "Pothole" as the prompt. 
+  - Comparing It returns polygons in the same format as the custom models. 
+  - Calculating mAP from these requires some polygon math (intersection over union) that I couldn't get into. 
+  - I decided to go with a count of objects as a gut-check metric for success. 
+  - I had to prompt using "puddle" for SAM 3 to return something useful.
 - **Result:**
 
-| Model | Pothole Count |
+| Model | Confidence | Object Count | % Accuracy
+| -- | -- | -- | --
+| Aerial Dataset | -- | 1444 | --
+| meta/sam3 | 50% | 558 | 38.6%
+| meta/sam3 | 25% | 1142 | 79.1%
+
+| 50% Conf | 25% Conf |
 | -- | -- |
-| meta/sam3 | 125
-| Aerial_350e | 1444
+| ![sam3-50pct.gif](../assets/2025-12-06-data-strategy-post/SAM3-50pct-Conf.gif) | ![sam3-25pct.gif](../assets/2025-12-06-data-strategy-post/SAM3-25pct-Conf.gif) |
 
-- **Conclusion:** This was kind of an apples:oranges comparison. SAM 3 was much slower than the YOLO models, but that was expected. For object detection it was hit or miss on the aerial test data (mostly miss). In a few of the images it picked up a good portion of potholes, but for the majority it failed to identify _any_. 
+- **Conclusion:** This was a blowout in terms of identifying the objects I was interested in. SAM 3 was much slower, but that was expected. It got even better with confidence tuning. 
 
-This was a surprise to me. I just assumed that a big model would easily generalize to most tasks. As it turns out, fine-tuned models are still needed for specific tasks. SAM 3 was not a great fit on my use-case (apart from being slow and costly compared to YOLO models).
+From a model to model perspective its kind of apples:oranges comparison. SAM 3 was much slower than the YOLO models, but that was expected. 
+
+But overall, SAM 3 got insanely close to the ground truth objects that were _manually_ labeled. Color me impressed. 
+
+| Ground Truth | SAM 3 @ 25% Conf |
+| -- | -- |
+| ![ground-truth-last-frame.png](../assets/2025-12-06-data-strategy-post/ground-truth-last-frame.png) | ![sam3-25pct-last-frame.jpg](../assets/2025-12-06-data-strategy-post/sam3-25pct-last-frame.jpg) |
 
 ### Summary Table
 
@@ -235,7 +253,7 @@ This was a surprise to me. I just assumed that a big model would easily generali
 | 3 | [Aerial_20e](https://huggingface.co/nmata010/aerial-pothole-detection-11252025_20Epoch_newDS) | More training on same data will improve model performance | Aerial view potholes | 20 | **42.9%** | Big performance improvement (4.2x). Tracking towards benchmark but still falls short. Training time relates to performance non-linearly | **Supported** 
 | 4 | [Aerial_350e](https://huggingface.co/nmata010/aerial-pothole-detection-12022025_350Epoch_newDS) | A long training run will yield better performance but a reduced rate. | Aerial view potholes | 350 | **50.4%** | Achieves benchmark! Notable improvement (17%) | **Supported** 
 | 5 | [RoboflowAerial_350e](https://github.com/nmata010/aerial-pothole-detection/blob/main/Notebooks/01_train_and_validate_yolo.ipynb) | Prod grade training will yield better performance | Aerial view potholes | 350 | **57%** | Notable improvement (13%) vs hyper parameter defaults | **Supported** 
-| 6 | [meta/SAM3](https://huggingface.co/facebook/sam3) | SOTA model will achieve 50% benchmark with no fine-tuning on domain data | Aerial view potholes | -- | -- | Detects ~9% of the potholes. | **Rejected** 
+| 6 | [meta/SAM3](https://huggingface.co/facebook/sam3) | SOTA model will achieve 50% benchmark with no fine-tuning on domain data | Aerial view potholes | -- | -- | Detects ~79% of the potholes. | **Supported** 
 
 
 ## Conclusion
@@ -245,6 +263,7 @@ That's a fun experiment, but what conclusions do we draw:
 1. Data makes the difference. This is obvious in hindsight, but worth repeating and extends beyond cvis. No training tweaks were going to fix the original control models. 
 2. The law of diminishing returns. Performance gains were huge early on but plateaued quickly. When that happens "more training" stops being a viable strategy.
 3. Controlled experiments. By changing few variables at a time  the cause/effect relationship between the changes and the performance were obvious.  
+4. SAM 3 is a game changer for computer vision. 
  
 I was able to take <5 min of drone footage and turn it into a working POC in just a few hours. This was an all out success that I wasn't expecting. 
 - Earnestly thought through the type of images and conditions that would make this model successful for the use-case (and published a dataset).
