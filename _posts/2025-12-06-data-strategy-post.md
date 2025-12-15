@@ -2,7 +2,7 @@
 layout: post
 title: "Domain shift & Data strategy"
 date: 2025-12-06
-image: /assets/2025-12-06-data-strategy-post/test-img-w-masks.png
+image: /assets/2025-12-06-data-strategy-post/SAM3-25pct-Conf.gif
 ---
 
 ## tl;dr
